@@ -1,5 +1,6 @@
 import 'package:bus_app/pages/example.dart';
 import 'package:bus_app/pages/example2.dart';
+import 'package:bus_app/pages/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
 enum PageType {
   example1,
   example2,
+  homepage,
 }
 
 class BottomNavigationNotifier extends Notifier<PageType> {
@@ -59,6 +61,8 @@ class MainPage extends ConsumerWidget {
       case PageType.example2:
         bodyWidget = const ExamplePage2();
         break;
+      case PageType.homepage:
+        bodyWidget = const HomePage();
     }
 
     return Scaffold(
