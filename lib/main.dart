@@ -1,3 +1,5 @@
+import 'package:bus_app/pages/example.dart';
+import 'package:bus_app/pages/example2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,21 +23,25 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// page追加時にはここに追加
 enum PageType {
-  home,
-  grapth,
+  example1,
+  example2,
 }
 
-class PageNotifier extends StateNotifier<PageType> {
-  PageNotifier() : super(PageType.home);
+class BottomNavigationNotifier extends Notifier<PageType> {
+  @override
+  build() {
+    return PageType.example1;
+  }
 
   void changePage(PageType pageType) {
     state = pageType;
   }
 }
 
-final pageProvider = StateNotifierProvider<PageNotifier, PageType>(
-  (ref) => PageNotifier(),
+final pageProvider = NotifierProvider<BottomNavigationNotifier, PageType>(
+  BottomNavigationNotifier.new,
 );
 
 class MainPage extends ConsumerWidget {
@@ -44,26 +50,39 @@ class MainPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentPage = ref.watch(pageProvider);
+
+    Widget bodyWidget;
+    switch (currentPage) {
+      case PageType.example1:
+        bodyWidget = const ExamplePage1();
+        break;
+      case PageType.example2:
+        bodyWidget = const ExamplePage2();
+        break;
+    }
+
     return Scaffold(
-        appBar: AppBar(
-          title: const Center(child: Text("Green House Application")),
-        ),
-        /*
-        body: currentPage == PageType.home
-            ? const Center(child: NowInstance())
-            : const Center(child: GreenGrapth()),
-        */
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: currentPage == PageType.home ? 0 : 1,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.graphic_eq_outlined), label: "Grapth")
-          ],
-          onTap: (index) {
-            final pageType = index == 0 ? PageType.home : PageType.grapth;
-            ref.read(pageProvider.notifier).changePage(pageType);
-          },
-        ));
+      appBar: AppBar(
+        title: const Center(child: Text("Green House Application")),
+      ),
+      body: bodyWidget,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: PageType.values.indexOf(currentPage),
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.expand),
+            label: 'Example',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.expand_circle_down),
+            label: 'Example2',
+          ),
+        ],
+        onTap: (index) {
+          final pageType = PageType.values[index];
+          ref.read(pageProvider.notifier).changePage(pageType);
+        },
+      ),
+    );
   }
 }
