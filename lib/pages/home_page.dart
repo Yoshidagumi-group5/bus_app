@@ -3,14 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:bus_app/pages/SearchResult.dart';
 
+final transColorProvider = StateProvider<bool>((ref) => false);
 
-final transColorProvider = StateProvider<bool>(
-  (ref) => false
-);
-
-final futsuColorProvider = StateProvider<bool>(
-  (ref) => false
-);
+final futsuColorProvider = StateProvider<bool>((ref) => false);
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -41,14 +36,8 @@ class HomePage extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CheckButton(
-                  text: '乗換あり',
-                  provider: transColorProvider
-                ),
-                CheckButton(
-                  text: '普通を外す',
-                  provider: futsuColorProvider
-                ),
+                CheckButton(text: '乗換あり', provider: transColorProvider),
+                CheckButton(text: '普通を外す', provider: futsuColorProvider),
               ],
             ),
             TextButton(
@@ -73,16 +62,15 @@ class HomePage extends ConsumerWidget {
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
                 onPressed: () {
-                  // 
+                  //
                 },
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.black,
-                  backgroundColor: const Color.fromARGB(255, 241, 241, 241),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  fixedSize: const Size(120, 50)
-                ),
+                    foregroundColor: Colors.black,
+                    backgroundColor: const Color.fromARGB(255, 241, 241, 241),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    fixedSize: const Size(120, 50)),
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -144,13 +132,12 @@ class TextButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.black,
-          backgroundColor: const Color.fromARGB(255, 241, 241, 241),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          fixedSize: Size(width, height)
-        ),
+            foregroundColor: Colors.black,
+            backgroundColor: const Color.fromARGB(255, 241, 241, 241),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            fixedSize: Size(width, height)),
         child: Text(
           text,
           style: TextStyle(
@@ -180,13 +167,13 @@ class CheckButton extends ConsumerWidget {
           ref.read(provider.notifier).state = !color;
         },
         style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.black,
-          backgroundColor: color ? Colors.blue : const Color.fromARGB(255, 241, 241, 241),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          fixedSize: const Size(150, 80)
-        ),
+            foregroundColor: Colors.black,
+            backgroundColor:
+                color ? Colors.blue : const Color.fromARGB(255, 241, 241, 241),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            fixedSize: const Size(150, 80)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
