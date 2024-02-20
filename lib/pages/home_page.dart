@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bus_app/pages/SearchResult.dart';
+
+
 final transColorProvider = StateProvider<bool>(
   (ref) => false
 );
@@ -104,7 +107,10 @@ class HomePage extends ConsumerWidget {
               width: 200,
               height: 80,
               onPressed: () {
-                // 画面遷移
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SearchResult()),
+                );
               },
             ),
           ],

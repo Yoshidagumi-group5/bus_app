@@ -1,5 +1,5 @@
-import 'dart:html';
-import 'dart:math';
+// import 'dart:html';
+// import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,24 +15,20 @@ class SearchResult extends ConsumerWidget {
         appBar: AppBar(
           backgroundColor: Colors.purple[100],
           centerTitle: true,
-          leading: const Icon(
-            Icons.clear_rounded,
-            size: 30,
-          ),
           title: const Text(
             "検索結果の一覧",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          actions: const [
-            Padding(
-              padding: EdgeInsets.only(right: 16.0),
-              child: Icon(
-                Icons.star,
-                size: 30,
-                color: Colors.white,
-              ),
-            )
-          ],
+          // actions: const [
+          //   Padding(
+          //     padding: EdgeInsets.only(right: 16.0),
+          //     child: Icon(
+          //       Icons.star,
+          //       size: 30,
+          //       color: Colors.white,
+          //     ),
+          //   )
+          // ],
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -184,91 +180,91 @@ class SearchResult extends ConsumerWidget {
                 child: ListView(
                   shrinkWrap: true,
                   children: <Widget>[
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.map),
                       title: Text('Map'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.photo_album),
                       title: Text('Album'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),
-                    ListTile(
+                    const ListTile(
                       leading: Icon(Icons.phone),
                       title: Text('Phone'),
                     ),

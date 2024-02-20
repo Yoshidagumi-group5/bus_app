@@ -1,9 +1,8 @@
 import 'package:bus_app/pages/example.dart';
-import 'package:bus_app/pages/example2.dart';
 import 'package:bus_app/pages/home_page.dart';
+import 'package:bus_app/pages/example2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'pages/SearchResult.dart';
 
 Future<void> main() async {
   runApp(const ProviderScope(child: MyApp()));
@@ -30,7 +29,6 @@ enum PageType {
   homePage,
   example1,
   example2,
-  SearchResult,
 }
 
 class BottomNavigationNotifier extends Notifier<PageType> {
@@ -64,10 +62,7 @@ class MainPage extends ConsumerWidget {
         bodyWidget = const ExamplePage1();
         break;
       case PageType.example2:
-        bodyWidget = const ExamplePage2();
-
-      case PageType.SearchResult:
-        bodyWidget = const SearchResult();
+        bodyWidget = const ExamplePage1();
         break;
     }
 
@@ -77,6 +72,7 @@ class MainPage extends ConsumerWidget {
       //),
       body: bodyWidget,
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         currentIndex: PageType.values.indexOf(currentPage),
         items: const [
           BottomNavigationBarItem(
@@ -90,10 +86,6 @@ class MainPage extends ConsumerWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.expand),
             label: 'Example2',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'SearchResult',
           ),
         ],
         onTap: (index) {
