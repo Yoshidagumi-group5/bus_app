@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:bus_app/pages/example.dart';
 import 'package:bus_app/pages/example2.dart';
 import 'package:flutter/material.dart';
@@ -70,9 +68,9 @@ class MainPage extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
+      /*appBar: AppBar(
         title: const Center(child: Text("Green House Application")),
-      ),
+      ),*/
       body: bodyWidget,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: PageType.values.indexOf(currentPage),
@@ -84,6 +82,10 @@ class MainPage extends ConsumerWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.expand_circle_down),
             label: 'Example2',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'SearchResult',
           ),
         ],
         onTap: (index) {
