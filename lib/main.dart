@@ -1,3 +1,5 @@
+import 'package:bus_app/pages/bus_registration.dart';
+import 'package:bus_app/pages/toggle_test.dart';
 import 'package:bus_app/pages/example.dart';
 import 'package:bus_app/pages/example2.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +29,8 @@ class MyApp extends StatelessWidget {
 enum PageType {
   example1,
   example2,
+  busRegistration,
+  toggleButtonsSample,
 }
 
 class BottomNavigationNotifier extends Notifier<PageType> {
@@ -59,14 +63,21 @@ class MainPage extends ConsumerWidget {
       case PageType.example2:
         bodyWidget = const ExamplePage2();
         break;
+      case PageType.busRegistration:
+        bodyWidget = const BusRegistration();
+        break;
+      case PageType.toggleButtonsSample:
+        bodyWidget = const ToggleButtonsSample(title: 'aaa');
+        break;
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Center(child: Text("Green House Application")),
-      ),
+      // appBar: AppBar(
+      //   title: const Center(child: Text("Green House Application")),
+      // ),
       body: bodyWidget,
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         currentIndex: PageType.values.indexOf(currentPage),
         items: const [
           BottomNavigationBarItem(
@@ -76,6 +87,14 @@ class MainPage extends ConsumerWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.expand_circle_down),
             label: 'Example2',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.directions_bus_outlined),
+            label: 'バス登録',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.directions_bus_outlined),
+            label: 'Toggle',
           ),
         ],
         onTap: (index) {
