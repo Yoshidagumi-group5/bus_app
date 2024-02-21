@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 const List<Widget> fruits = <Widget>[
   Text('Apple'),
   Text('Banana'),
-  Text('Orange')
+  Text('Orange'),
 ];
 
 class ToggleButtonsSample extends StatefulWidget {
@@ -20,7 +20,6 @@ class _ToggleButtonsSample extends State<ToggleButtonsSample> {
   // const _BusRegistration({super.key});
 
   final List<bool> _selectedFruits = <bool>[true, false, false];
-  // bool vertical = false;
 
   @override
   Widget build(BuildContext context) {

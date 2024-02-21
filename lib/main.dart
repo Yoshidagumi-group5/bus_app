@@ -64,7 +64,7 @@ class MainPage extends ConsumerWidget {
         bodyWidget = const ExamplePage2();
         break;
       case PageType.busRegistration:
-        bodyWidget = const BusRegistration();
+        bodyWidget = BusRegistration();
         break;
       case PageType.toggleButtonsSample:
         bodyWidget = const ToggleButtonsSample(title: 'aaa');
