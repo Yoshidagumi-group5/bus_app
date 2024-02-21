@@ -2,13 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-const List<Widget> fruits = <Widget>[
-  Text('Apple'),
-  Text('Banana'),
-  Text('Orange')
+
+class Test1 extends StatelessWidget {
+  const Test1({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text('test1');
+  }
+}
+
+
+const List<Widget> routes = <Widget>[
+  Text('ルート１'),
+  Text('ルート２'),
+  Text('ルート３')
 ];
 
-final fruitProvider = StateProvider<List<bool>>(
+final routeProvider = StateProvider<List<bool>>(
   (ref) => <bool>[true, false, false],
 );
 
@@ -17,7 +28,7 @@ class BusRegistration extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final fruit = ref.watch(fruitProvider);
+    final route = ref.watch(routeProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -32,11 +43,11 @@ class BusRegistration extends ConsumerWidget {
           ToggleButtons(
             direction: Axis.horizontal,
             onPressed: (int index) {
-              // for (int i = 0; i < fruit.length; i++) {
-              //   fruit[i] = i == index;
+              // for (int i = 0; i < route.length; i++) {
+              //   route[i] = i == index;
               // }
-              ref.read(fruitProvider.notifier).state =
-                  List.generate(fruit.length, (i) => i == index);
+              ref.read(routeProvider.notifier).state =
+                  List.generate(route.length, (i) => i == index);
             },
             borderRadius: const BorderRadius.all(Radius.circular(8)),
             // selectedBorderColor: Colors.blue,
@@ -47,8 +58,14 @@ class BusRegistration extends ConsumerWidget {
               minHeight: 40.0,
               minWidth: 80.0,
             ),
-            isSelected: fruit,
-            children: fruits,
+            isSelected: route,
+            children: routes,
+          ),
+          Container(
+            color: Colors.black38,
+            width: double.infinity,
+            height: 300,
+            child: Test1(),
           ),
         ],
       ),

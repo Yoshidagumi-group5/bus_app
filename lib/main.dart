@@ -1,5 +1,4 @@
 import 'package:bus_app/pages/bus_registration.dart';
-import 'package:bus_app/pages/toggle_test.dart';
 import 'package:bus_app/pages/example.dart';
 import 'package:bus_app/pages/example2.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +29,6 @@ enum PageType {
   example1,
   example2,
   busRegistration,
-  toggleButtonsSample,
 }
 
 class BottomNavigationNotifier extends Notifier<PageType> {
@@ -66,9 +64,6 @@ class MainPage extends ConsumerWidget {
       case PageType.busRegistration:
         bodyWidget = BusRegistration();
         break;
-      case PageType.toggleButtonsSample:
-        bodyWidget = const ToggleButtonsSample(title: 'aaa');
-        break;
     }
 
     return Scaffold(
@@ -91,10 +86,6 @@ class MainPage extends ConsumerWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.directions_bus_outlined),
             label: 'バス登録',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.directions_bus_outlined),
-            label: 'Toggle',
           ),
         ],
         onTap: (index) {
