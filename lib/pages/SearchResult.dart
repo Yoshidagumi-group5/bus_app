@@ -4,6 +4,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+final colorProvider = StateProvider<bool>((ref) => false);
+
 class SearchResult extends ConsumerWidget {
   const SearchResult({super.key});
 
@@ -231,25 +233,27 @@ class SearchResult extends ConsumerWidget {
                       ),
                       child: Text(
                         busNum.toString(),
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       )),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 8.0, bottom: 4.0),
+                  padding: const EdgeInsets.only(left: 8.0, bottom: 4.0),
                   child: Text(
                     startBusStop,
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 17, fontWeight: FontWeight.bold),
                   ),
                 ),
+                BusRegisterationButton(provider: colorProvider),
                 Expanded(
                   child: Container(
                     alignment: Alignment.centerRight,
                     child: Padding(
-                      padding: EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        cost.toString() + "円　" + time.toString() + "分",
-                        style: TextStyle(fontSize: 15),
+                        "$cost円　$time分",
+                        style: const TextStyle(fontSize: 15),
                       ),
                     ),
                   ),
@@ -265,10 +269,10 @@ class SearchResult extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      "約" + delayTime.toString() + "分遅れ",
-                      style: TextStyle(
+                      "約$delayTime分遅れ",
+                      style: const TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
                           color: Colors.red),
@@ -281,22 +285,22 @@ class SearchResult extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         startTime,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         startBusStop,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 15,
                         ),
                       ),
-                      Text(
+                      const Text(
                         "(那覇行き)",
                         style: TextStyle(
                           fontSize: 15,
@@ -305,27 +309,27 @@ class SearchResult extends ConsumerWidget {
                     ],
                   ),
                 ),
-                Icon(
+                const Icon(
                   Icons.arrow_forward_rounded,
                   size: 30,
                 ),
                 Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         endTime,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         endBusStop,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 15,
                         ),
                       ),
-                      Text(
+                      const Text(
                         "(那覇行き)",
                         style: TextStyle(
                           fontSize: 15,
@@ -336,6 +340,33 @@ class SearchResult extends ConsumerWidget {
                 ),
               ],
             )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BusRegisterationButton extends ConsumerWidget {
+  const BusRegisterationButton({super.key, required this.provider});
+
+  final StateProvider<bool> provider;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final color = ref.watch(provider);
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ElevatedButton(
+        onPressed: () {
+          ref.read(provider.notifier).state = !color;
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.directions_bus_filled_sharp,
+                color: color ? Colors.white : Colors.black)
           ],
         ),
       ),
