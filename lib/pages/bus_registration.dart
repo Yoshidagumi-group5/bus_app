@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+// SearchResult(仮)
 class SearchResult extends StatelessWidget {
   const SearchResult({super.key, required this.text});
 
@@ -12,6 +13,12 @@ class SearchResult extends StatelessWidget {
     return text;
   }
 }
+
+// const List<Widget> routes = <Widget>[
+//   Text('ルート１'),
+//   Text('ルート２'),
+//   Text('ルート３')
+// ];
 
 const List<String> routes = <String>[
   'ルート１',
@@ -29,15 +36,7 @@ final routeProvider = StateProvider<List<bool>>(
   (ref) => <bool>[true, false, false],
 );
 final routeWidgetProvider = StateProvider<Widget>(
-  (ref) => Route(alarm: Alarm(text: Text(routes[0]))),
-);
-
-
-final optionProvider = StateProvider<List<bool>>(
-  (ref) => <bool>[true, false],
-);
-final optionWidgetProvider = StateProvider<Widget>(
-  (ref) => Alarm(text: Text(routes[0])),
+  (ref) => Route(route: routes[0]),
 );
 
 
@@ -46,7 +45,12 @@ class BusRegistration extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final routeWidgets = routes.map((route) => Route(alarm: Text(route))).toList();
+    // final routeWidgets = routes.map((route) => Route(alarm: Text(route))).toList();
+    final routeWidgets = [
+      Route(route: routes[0]),
+      Route(route: routes[1]),
+      Route(route: routes[2])
+    ];
 
     final route = ref.watch(routeProvider);
     final routeWidget = ref.watch(routeWidgetProvider);
@@ -82,9 +86,15 @@ class BusRegistration extends ConsumerWidget {
                 minWidth: 80.0,
               ),
               isSelected: route,
-              children: routes.map((route) => Text(route)).toList(),
+              // children: routes,
+              children: <Widget>[
+                Text('ルート１'),
+                Text('ルート２'),
+                Text('ルート３')
+              ],
             ),
             routeWidget,
+            // Route(route: routes[2]),
           ],
         ),
       ),
@@ -92,18 +102,27 @@ class BusRegistration extends ConsumerWidget {
   }
 }
 
+
+final optionProvider = StateProvider<List<bool>>(
+  (ref) => <bool>[true, false],
+);
+
 // 各ルートを表示するためのウィジェット
 class Route extends ConsumerWidget {
-  const Route({super.key, required this.alarm});
+  const Route({super.key, required this.route});
 
-  final Widget alarm;
+  final String route;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final optionWidgets = <Widget>[alarm, Map()];
+    final optionWidgetProvider = StateProvider<Widget>(
+      (ref) => Alarm(text: route),
+    );
 
     final option = ref.watch(optionProvider);
     final optionWidget = ref.watch(optionWidgetProvider);
+
+    final optionWidgets = <Widget>[optionWidget, routeMap()];
 
     return Container(
       padding: const EdgeInsets.all(16.0),
@@ -113,7 +132,7 @@ class Route extends ConsumerWidget {
             color: Colors.black38,
             width: double.infinity,
             height: 200,
-            child: SearchResult(text: Text('検索結果')),
+            child: SearchResult(text: Text('検索結果')),  // SearchResult(仮)
           ),
           ToggleButtons(
             direction: Axis.horizontal,
@@ -134,21 +153,29 @@ class Route extends ConsumerWidget {
             children: options,
           ),
           optionWidget,
+          // Alarm(text: routes[0]),
         ],
       ),
     );
   }
 }
 
+
+final alarmToggleProvider = StateProvider(
+  (ref) => false,
+);
+
 // 各ルートのアラームウィジェット
 class Alarm extends ConsumerWidget {
   // バス停の情報を取得するための引数を追加する
   const Alarm({super.key, required this.text});
 
-  final Widget text;
+  final String text;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final alarmToggle = ref.watch(alarmToggleProvider);
+
     return Column(
       children: [
         Row(
@@ -159,8 +186,9 @@ class Alarm extends ConsumerWidget {
               style: const TextStyle(fontSize: 25),
             ),
             Switch(
-              value: false,
-              onChanged: (value) {
+              value: alarmToggle,
+              onChanged: (bool value) {
+                ref.read(alarmToggleProvider.notifier).state = value;
               },
             ),
           ],
@@ -217,6 +245,7 @@ class Alarm extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
@@ -224,60 +253,78 @@ class Alarm extends ConsumerWidget {
                             value: false,
                             onChanged: (value) {},
                           ),
-                          text,
+                          Text(text),
                         ],
                       ),
-                      Icon(Icons.south),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Icon(Icons.south),
+                      ),
                       Row(
                         children: [
                           Switch(
                             value: false,
                             onChanged: (value) {},
                           ),
-                          Text('東風平中学校前', style: const TextStyle(fontSize: 25)),
+                          Text(text),
                         ],
                       ),
-                      Icon(Icons.south),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Icon(Icons.south),
+                      ),
                       Row(
                         children: [
                           Switch(
                             value: false,
                             onChanged: (value) {},
                           ),
-                          Text('東風平中学校前', style: const TextStyle(fontSize: 25)),
+                          Text(text),
                         ],
                       ),
-                      Icon(Icons.south),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Icon(Icons.south),
+                      ),
                       Row(
                         children: [
                           Switch(
                             value: false,
                             onChanged: (value) {},
                           ),
-                          Text('東風平中学校前', style: const TextStyle(fontSize: 25)),
+                          Text(text),
                         ],
                       ),
-                      Icon(Icons.south),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Icon(Icons.south),
+                      ),
                       Row(
                         children: [
                           Switch(
                             value: false,
                             onChanged: (value) {},
                           ),
-                          Text('東風平中学校前', style: const TextStyle(fontSize: 25)),
+                          Text(text),
                         ],
                       ),
-                      Icon(Icons.south),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Icon(Icons.south),
+                      ),
                       Row(
                         children: [
                           Switch(
                             value: false,
                             onChanged: (value) {},
                           ),
-                          Text('東風平中学校前', style: const TextStyle(fontSize: 25)),
+                          Text(text),
                         ],
                       ),
-                      Icon(Icons.south),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Icon(Icons.south),
+                      ),
                     ],
                   ),
                 ],
@@ -291,9 +338,9 @@ class Alarm extends ConsumerWidget {
 }
 
 // 各ルートのマップウィジェット
-class Map extends ConsumerWidget {
+class routeMap extends ConsumerWidget {
   // バスのルートを取得する引数を追加する
-  const Map({super.key});
+  const routeMap({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
