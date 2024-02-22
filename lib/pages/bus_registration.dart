@@ -20,17 +20,25 @@ const List<Widget> routes = <Widget>[
   Text('ルート３')
 ];
 
-const List<Widget> options = <Widget>[
-  Text('アラーム'),
-  Text('マップ')
-];
-
-
 final routeProvider = StateProvider<List<bool>>(
   (ref) => <bool>[true, false, false],
 );
 final routeWidgetProvider = StateProvider<Widget>(
   (ref) => Route(route: routes[0]),
+);
+
+
+const List<Widget> options = <Widget>[
+  Text('アラーム'),
+  Text('マップ')
+];
+
+final optionProvider = StateProvider<List<bool>>(
+  (ref) => <bool>[true, false],
+);
+
+final optionWidgetProvider = StateProvider<Widget>(
+  (ref) => Alarm(text: routes[0]),
 );
 
 
@@ -61,6 +69,10 @@ class BusRegistration extends ConsumerWidget {
                 ref.read(routeProvider.notifier).state =
                     List.generate(route.length, (i) => i == index);
                 ref.read(routeWidgetProvider.notifier).state = routeWidgets[index];
+
+                // ルートを切り替える時、optionWidgetはアラームを表示させる
+                ref.read(optionProvider.notifier).state = [true, false];
+                ref.read(optionWidgetProvider.notifier).state = Alarm(text: routes[index]);
               },
               borderRadius: const BorderRadius.all(Radius.circular(8)),
               // selectedBorderColor: Colors.blue,
@@ -82,11 +94,6 @@ class BusRegistration extends ConsumerWidget {
   }
 }
 
-
-final optionProvider = StateProvider<List<bool>>(
-  (ref) => <bool>[true, false],
-);
-
 // 各ルートを表示するためのウィジェット
 class Route extends ConsumerWidget {
   const Route({super.key, required this.route});
@@ -95,14 +102,14 @@ class Route extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final optionWidgetProvider = StateProvider<Widget>(
-      (ref) => Alarm(text: route),
-    );
+    final optionWidgets = <Widget>[Alarm(text: route), RouteMap(text: route)];
+
+    // final optionWidgetProvider = StateProvider<Widget>(
+    //   (ref) => optionWidgets[0],
+    // );
 
     final option = ref.watch(optionProvider);
     final optionWidget = ref.watch(optionWidgetProvider);
-
-    final optionWidgets = <Widget>[optionWidget, routeMap()];
 
     return Container(
       padding: const EdgeInsets.all(16.0),
@@ -133,6 +140,7 @@ class Route extends ConsumerWidget {
             children: options,
           ),
           optionWidget,
+          // RouteMap(text: route),
         ],
       ),
     );
@@ -317,12 +325,14 @@ class Alarm extends ConsumerWidget {
 }
 
 // 各ルートのマップウィジェット
-class routeMap extends ConsumerWidget {
+class RouteMap extends ConsumerWidget {
   // バスのルートを取得する引数を追加する
-  const routeMap({super.key});
+  const RouteMap({super.key, required this.text});
+
+  final Widget text;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const Center(child: Text('マップ'));
+    return Center(child: text);
   }
 }
