@@ -20,9 +20,11 @@ const List<Widget> routes = <Widget>[
   Text('ルート３')
 ];
 
-final routeProvider = StateProvider<List<bool>>(
+// 表示するルートを切り替えるためのToggleの状態を管理
+final routeToggleProvider = StateProvider<List<bool>>(
   (ref) => <bool>[true, false, false],
 );
+// 表示するルートのウェイジェットの状態を管理
 final routeWidgetProvider = StateProvider<Widget>(
   (ref) => Route(route: routes[0]),
 );
@@ -32,16 +34,16 @@ const List<Widget> options = <Widget>[
   Text('アラーム'),
   Text('マップ')
 ];
-
+// Toggleのアラームとマップのどっちを選択しているかの状態を管理
 final optionProvider = StateProvider<List<bool>>(
   (ref) => <bool>[true, false],
 );
-
+// 各ルートでアラームとマップのどっちを表示させるかの状態を管理
 final optionWidgetProvider = StateProvider<Widget>(
   (ref) => Alarm(text: routes[0]),
 );
 
-
+// バス登録ページのWidget
 class BusRegistration extends ConsumerWidget {
   const BusRegistration({super.key});
 
@@ -49,7 +51,7 @@ class BusRegistration extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final routeWidgets = routes.map((route) => Route(route: route)).toList();
 
-    final route = ref.watch(routeProvider);
+    final route = ref.watch(routeToggleProvider);
     final routeWidget = ref.watch(routeWidgetProvider);
 
     return Scaffold(
@@ -66,7 +68,7 @@ class BusRegistration extends ConsumerWidget {
             ToggleButtons(
               direction: Axis.horizontal,
               onPressed: (int index) {
-                ref.read(routeProvider.notifier).state =
+                ref.read(routeToggleProvider.notifier).state =
                     List.generate(route.length, (i) => i == index);
                 ref.read(routeWidgetProvider.notifier).state = routeWidgets[index];
 
@@ -104,10 +106,6 @@ class Route extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final optionWidgets = <Widget>[Alarm(text: route), RouteMap(text: route)];
 
-    // final optionWidgetProvider = StateProvider<Widget>(
-    //   (ref) => optionWidgets[0],
-    // );
-
     final option = ref.watch(optionProvider);
     final optionWidget = ref.watch(optionWidgetProvider);
 
@@ -140,15 +138,18 @@ class Route extends ConsumerWidget {
             children: options,
           ),
           optionWidget,
-          // RouteMap(text: route),
         ],
       ),
     );
   }
 }
 
-
-final alarmToggleProvider = StateProvider(
+// バス到着アラーム
+final busArrivalAlarmProvider = StateProvider<bool>(
+  (ref) => false,
+);
+// 寝落ち防止アラーム
+final wakeUpAlarmProvider = StateProvider<bool>(
   (ref) => false,
 );
 
@@ -161,7 +162,8 @@ class Alarm extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final alarmToggle = ref.watch(alarmToggleProvider);
+    final arrivalAlarm = ref.watch(busArrivalAlarmProvider);
+    final wakeUpAlarm = ref.watch(wakeUpAlarmProvider);
 
     return Column(
       children: [
@@ -173,9 +175,9 @@ class Alarm extends ConsumerWidget {
               style: const TextStyle(fontSize: 25),
             ),
             Switch(
-              value: alarmToggle,
+              value: arrivalAlarm,
               onChanged: (bool value) {
-                ref.read(alarmToggleProvider.notifier).state = value;
+                ref.read(busArrivalAlarmProvider.notifier).state = value;
               },
             ),
           ],
@@ -217,8 +219,9 @@ class Alarm extends ConsumerWidget {
               style: const TextStyle(fontSize: 25),
             ),
             Switch(
-              value: false,
+              value: wakeUpAlarm,
               onChanged: (value) {
+                ref.read(wakeUpAlarmProvider.notifier).state = value;
               },
             ),
           ],
