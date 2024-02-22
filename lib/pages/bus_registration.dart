@@ -14,16 +14,10 @@ class SearchResult extends StatelessWidget {
   }
 }
 
-// const List<Widget> routes = <Widget>[
-//   Text('ルート１'),
-//   Text('ルート２'),
-//   Text('ルート３')
-// ];
-
-const List<String> routes = <String>[
-  'ルート１',
-  'ルート２',
-  'ルート３'
+const List<Widget> routes = <Widget>[
+  Text('ルート１'),
+  Text('ルート２'),
+  Text('ルート３')
 ];
 
 const List<Widget> options = <Widget>[
@@ -45,12 +39,7 @@ class BusRegistration extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final routeWidgets = routes.map((route) => Route(alarm: Text(route))).toList();
-    final routeWidgets = [
-      Route(route: routes[0]),
-      Route(route: routes[1]),
-      Route(route: routes[2])
-    ];
+    final routeWidgets = routes.map((route) => Route(route: route)).toList();
 
     final route = ref.watch(routeProvider);
     final routeWidget = ref.watch(routeWidgetProvider);
@@ -69,9 +58,6 @@ class BusRegistration extends ConsumerWidget {
             ToggleButtons(
               direction: Axis.horizontal,
               onPressed: (int index) {
-                // for (int i = 0; i < route.length; i++) {
-                //   route[i] = i == index;
-                // }
                 ref.read(routeProvider.notifier).state =
                     List.generate(route.length, (i) => i == index);
                 ref.read(routeWidgetProvider.notifier).state = routeWidgets[index];
@@ -86,15 +72,9 @@ class BusRegistration extends ConsumerWidget {
                 minWidth: 80.0,
               ),
               isSelected: route,
-              // children: routes,
-              children: <Widget>[
-                Text('ルート１'),
-                Text('ルート２'),
-                Text('ルート３')
-              ],
+              children: routes,
             ),
             routeWidget,
-            // Route(route: routes[2]),
           ],
         ),
       ),
@@ -111,7 +91,7 @@ final optionProvider = StateProvider<List<bool>>(
 class Route extends ConsumerWidget {
   const Route({super.key, required this.route});
 
-  final String route;
+  final Widget route;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -153,7 +133,6 @@ class Route extends ConsumerWidget {
             children: options,
           ),
           optionWidget,
-          // Alarm(text: routes[0]),
         ],
       ),
     );
@@ -170,7 +149,7 @@ class Alarm extends ConsumerWidget {
   // バス停の情報を取得するための引数を追加する
   const Alarm({super.key, required this.text});
 
-  final String text;
+  final Widget text;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -253,7 +232,7 @@ class Alarm extends ConsumerWidget {
                             value: false,
                             onChanged: (value) {},
                           ),
-                          Text(text),
+                          text,
                         ],
                       ),
                       Padding(
@@ -266,7 +245,7 @@ class Alarm extends ConsumerWidget {
                             value: false,
                             onChanged: (value) {},
                           ),
-                          Text(text),
+                          text,
                         ],
                       ),
                       Padding(
@@ -279,7 +258,7 @@ class Alarm extends ConsumerWidget {
                             value: false,
                             onChanged: (value) {},
                           ),
-                          Text(text),
+                          text,
                         ],
                       ),
                       Padding(
@@ -292,7 +271,7 @@ class Alarm extends ConsumerWidget {
                             value: false,
                             onChanged: (value) {},
                           ),
-                          Text(text),
+                          text,
                         ],
                       ),
                       Padding(
@@ -305,7 +284,7 @@ class Alarm extends ConsumerWidget {
                             value: false,
                             onChanged: (value) {},
                           ),
-                          Text(text),
+                          text,
                         ],
                       ),
                       Padding(
@@ -318,7 +297,7 @@ class Alarm extends ConsumerWidget {
                             value: false,
                             onChanged: (value) {},
                           ),
-                          Text(text),
+                          text,
                         ],
                       ),
                       Padding(
