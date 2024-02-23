@@ -4,8 +4,8 @@ import 'package:bus_app/pages/example.dart';
 import 'package:bus_app/pages/example2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'pages/SearchResult.dart';
 import 'pages/okica.dart';
+import 'pages/readOkica.dart';
 
 Future<void> main() async {
   runApp(const ProviderScope(child: MyApp()));
@@ -32,6 +32,7 @@ enum PageType {
   example1,
   example2,
   okica,
+  readOkica,
 }
 
 class BottomNavigationNotifier extends Notifier<PageType> {
@@ -68,11 +69,16 @@ class MainPage extends ConsumerWidget {
       case PageType.okica:
         bodyWidget = const Okica();
         break;
+
+      case PageType.readOkica:
+        bodyWidget = const ReadOkica();
+        break;
     }
 
     return Scaffold(
       body: bodyWidget,
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         currentIndex: PageType.values.indexOf(currentPage),
         items: const [
           BottomNavigationBarItem(
@@ -86,6 +92,10 @@ class MainPage extends ConsumerWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.expand_circle_down),
             label: 'okica',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.expand_circle_down),
+            label: 'readOkica',
           ),
         ],
         onTap: (index) {

@@ -1,4 +1,3 @@
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 
 class Okica extends StatelessWidget {
@@ -10,7 +9,7 @@ class Okica extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 178, 177, 178),
-        title: Text(
+        title: const Text(
           '現在の残高',
           style: TextStyle(color: Colors.black),
         ),
@@ -19,23 +18,23 @@ class Okica extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start, // 上側に配置
 
         children: [
-          SizedBox(
+          const SizedBox(
             width: 400,
             height: 20,
           ),
           Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 20,
                 height: 200,
               ),
-              Container(
+              SizedBox(
                 width: 375,
                 height: 200,
                 child: Container(
                   alignment: Alignment.center,
-                  color: Color.fromARGB(255, 174, 174, 174),
-                  child: Text(
+                  color: const Color.fromARGB(255, 174, 174, 174),
+                  child: const Text(
                     '100円',
                     style: TextStyle(
                       fontSize: 60,
@@ -48,7 +47,7 @@ class Okica extends StatelessWidget {
           ),
           Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 20,
                 height: 100,
               ),
@@ -57,8 +56,8 @@ class Okica extends StatelessWidget {
                 height: 50,
                 child: Container(
                   alignment: Alignment.center,
-                  color: Color.fromARGB(255, 174, 174, 174),
-                  child: Text(
+                  color: const Color.fromARGB(255, 174, 174, 174),
+                  child: const Text(
                     '利用履歴',
                     style: TextStyle(fontSize: 30),
                   ),
@@ -66,8 +65,8 @@ class Okica extends StatelessWidget {
               ),
             ],
           ),
-          Text('2021/1/1'),
-          Row(
+          const Text('2021/1/1'),
+          const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text('沖縄高専前'),
@@ -77,12 +76,12 @@ class Okica extends StatelessWidget {
               Text('名護十字路'),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             width: 400,
             height: 20,
           ),
-          Text('2021/1/1'),
-          Row(
+          const Text('2021/1/1'),
+          const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text('沖縄高専前'),
@@ -92,12 +91,12 @@ class Okica extends StatelessWidget {
               Text('名護十字路'),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             width: 400,
             height: 20,
           ),
-          Text('2021/1/1'),
-          Row(
+          const Text('2021/1/1'),
+          const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text('沖縄高専前'),
