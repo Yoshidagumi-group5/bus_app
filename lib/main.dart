@@ -1,10 +1,11 @@
-import 'dart:html';
+//import 'dart:html';
 
 import 'package:bus_app/pages/example.dart';
 import 'package:bus_app/pages/example2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'pages/SearchResult.dart';
+import 'pages/okica.dart';
 
 Future<void> main() async {
   runApp(const ProviderScope(child: MyApp()));
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
 enum PageType {
   example1,
   example2,
-  SearchResult,
+  okica,
 }
 
 class BottomNavigationNotifier extends Notifier<PageType> {
@@ -64,15 +65,12 @@ class MainPage extends ConsumerWidget {
         bodyWidget = const ExamplePage2();
         break;
 
-      case PageType.SearchResult:
-        bodyWidget = const SearchResult();
+      case PageType.okica:
+        bodyWidget = const Okica();
         break;
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Center(child: Text("Green House Application")),
-      ),
       body: bodyWidget,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: PageType.values.indexOf(currentPage),
@@ -84,6 +82,10 @@ class MainPage extends ConsumerWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.expand_circle_down),
             label: 'Example2',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.expand_circle_down),
+            label: 'okica',
           ),
         ],
         onTap: (index) {
