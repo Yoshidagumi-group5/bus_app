@@ -1,6 +1,7 @@
 // import 'dart:html';
 // import 'dart:math';
 
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,192 +13,208 @@ class SearchResult extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.purple[100],
-          centerTitle: true,
-          title: const Text(
-            "検索結果の一覧",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          // actions: const [
-          //   Padding(
-          //     padding: EdgeInsets.only(right: 16.0),
-          //     child: Icon(
-          //       Icons.star,
-          //       size: 30,
-          //       color: Colors.white,
-          //     ),
-          //   )
-          // ],
+      backgroundColor: const Color(0xFFFFE8AE),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFBD2B2B),
+        centerTitle: true,
+        title: const Text(
+          "検索結果の一覧",
+          style: TextStyle(fontSize: 20, color: Color(0xFFFFFFFF)),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10.0, left: 10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
+        // actions: const [
+        //   Padding(
+        //     padding: EdgeInsets.only(right: 16.0),
+        //     child: Icon(
+        //       Icons.star,
+        //       size: 30,
+        //       color: Colors.white,
+        //     ),
+        //   )
+        // ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 10.0, left: 10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: const Color(0xFFE2A5A4)),
                             borderRadius: BorderRadius.circular(10),
-                            color: Colors.black38,
+                            color: Colors.white),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "2024/02/19",
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    "出発：13:40",
+                                    style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 10, bottom: 10.0, right: 10.0),
+                        child: Container(
+                          alignment: Alignment.centerRight,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: const Color(0xFFE2A5A4)),
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
                           ),
                           child: const Padding(
                             padding: EdgeInsets.all(8.0),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "2024/02/19",
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold),
+                                Icon(
+                                  Icons.subdirectory_arrow_right,
+                                  size: 30,
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding:
+                                        EdgeInsets.only(top: 2.0, bottom: 2.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "国立沖縄工業高等専門学校",
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(height: 3),
+                                        Text(
+                                          "那覇空港第二バスターミナル",
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      "出発：13:40",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ],
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              top: 10, bottom: 10.0, right: 10.0),
-                          child: Container(
-                            alignment: Alignment.centerRight,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.black38,
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.subdirectory_arrow_right,
-                                    size: 30,
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 2.0, bottom: 2.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "国立沖縄工業高等専門学校",
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          SizedBox(height: 3),
-                                          Text(
-                                            "那覇空港第二バスターミナル",
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10.0),
+                        child: Container(
+                          alignment: Alignment.centerRight,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: const Color(0xFFE2A5A4)),
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding:
+                                        EdgeInsets.only(top: 2.0, bottom: 2.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "検索条件",
+                                              style: TextStyle(fontSize: 13),
+                                            ),
+                                            SizedBox(width: 5),
+                                            Text(
+                                              "乗り換えなし",
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold),
+                                            )
+                                          ],
+                                        )
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 10.0),
-                          child: Container(
-                            alignment: Alignment.centerRight,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.black38,
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 2.0, bottom: 2.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "検索条件",
-                                                style: TextStyle(fontSize: 13),
-                                              ),
-                                              SizedBox(width: 5),
-                                              Text(
-                                                "なし",
-                                                style: TextStyle(
-                                                    fontSize: 15,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              )
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.only(right: 8.0, left: 8.0, top: 16.0),
-                child: LimitedBox(
-                  maxHeight: 540,
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      busSearchResult(77, 500, 30, 3, '14:30', '15:30',
-                          '沖縄高専入口', '那覇バスターミナル'),
-                      busSearchResult(77, 500, 30, 3, '14:30', '15:30',
-                          '沖縄高専入口', '那覇バスターミナル'),
-                      busSearchResult(77, 500, 30, 3, '14:30', '15:30',
-                          '沖縄高専入口', '那覇バスターミナル'),
-                      busSearchResult(77, 500, 30, 3, '14:30', '15:30',
-                          '沖縄高専入口', '那覇バスターミナル'),
+                      ),
                     ],
                   ),
                 ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0, left: 8.0, top: 16.0),
+              child: LimitedBox(
+                maxHeight: MediaQuery.of(context).size.height * 0.8,
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    busSearchResult(77, 500, 30, 3, '14:30', '15:30', '沖縄高専入口',
+                        '那覇バスターミナル'),
+                    busSearchResult(77, 500, 30, 3, '14:30', '15:30', '沖縄高専入口',
+                        '那覇バスターミナル'),
+                    busSearchResult(77, 500, 30, 3, '14:30', '15:30', '沖縄高専入口',
+                        '那覇バスターミナル'),
+                    busSearchResult(77, 500, 30, 3, '14:30', '15:30', '沖縄高専入口',
+                        '那覇バスターミナル'),
+                  ],
+                ),
               ),
-            ],
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: SizedBox(
+        width: 70,
+        height: 70,
+        child: FloatingActionButton(
+          backgroundColor: const Color(0xFFBD2B2B),
+          shape: const CircleBorder(),
+          onPressed: () {},
+          child: const Icon(
+            Icons.replay_outlined,
+            size: 30,
+            color: Colors.white,
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   Widget busSearchResult(
@@ -214,8 +231,9 @@ class SearchResult extends ConsumerWidget {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(
+          border: Border.all(color: const Color(0xFFE2A5A4)),
           borderRadius: BorderRadius.circular(10),
-          color: Colors.black38,
+          color: Colors.white,
         ),
         child: Column(
           children: [
@@ -228,6 +246,7 @@ class SearchResult extends ConsumerWidget {
                       width: 50,
                       height: 30,
                       decoration: BoxDecoration(
+                        border: Border.all(color: const Color(0xFFE2A5A4)),
                         borderRadius: BorderRadius.circular(5),
                         color: Colors.white,
                       ),
@@ -238,7 +257,7 @@ class SearchResult extends ConsumerWidget {
                       )),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 8.0, bottom: 4.0),
+                  padding: const EdgeInsets.only(left: 4.0, bottom: 4.0),
                   child: Text(
                     startBusStop,
                     style: const TextStyle(
@@ -261,9 +280,8 @@ class SearchResult extends ConsumerWidget {
               ],
             ),
             Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                color: Colors.white,
+              decoration: const BoxDecoration(
+                color: Color(0xFFFFF4D9),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -358,16 +376,17 @@ class BusRegisterationButton extends ConsumerWidget {
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: ElevatedButton(
-        onPressed: () {
-          ref.read(provider.notifier).state = !color;
-        },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.directions_bus_filled_sharp,
-                color: color ? Colors.white : Colors.black)
-          ],
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10), color: const Color(0xFFE2A5A4)),
+        child: IconButton(
+          onPressed: () {
+            ref.read(provider.notifier).state = !color;
+          },
+          icon: Icon(
+            Icons.directions_bus_filled_sharp,
+            color: color ? Colors.black : Colors.black45,
+          ),
         ),
       ),
     );
