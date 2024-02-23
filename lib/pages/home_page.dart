@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final transColorProvider = StateProvider<bool>((ref) => false);
-
 final futsuColorProvider = StateProvider<bool>((ref) => false);
 
 class HomePage extends ConsumerWidget {
@@ -38,8 +37,8 @@ class HomePage extends ConsumerWidget {
               TextButton(
                 text: 'じかん',
                 textSize: 30,
-                width: 300,
-                height: 80,
+                width: 200,
+                height: 70,
                 onPressed: () {
                   // 画面遷移
                 },
@@ -70,11 +69,7 @@ class HomePage extends ConsumerWidget {
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.arrow_upward_filled,
-                        size: 30,
-                        color: Color.fromARGB(255, 189, 43, 43),
-                      ),
+                      Icon(Icons.north, size: 30, color: Color.fromARGB(255, 189, 43, 43)),
                       Icon(Icons.south, size: 30, color: Color.fromARGB(255, 189, 43, 43))
                     ],
                   ),
@@ -89,21 +84,44 @@ class HomePage extends ConsumerWidget {
                   // 画面遷移
                 },
               ),
-              TextButton(
-                text: 'しらべる',
-                textSize: 30,
-                width: 200,
-                height: 80,
-                onPressed: () {
-                  /**
-                   * feature/searchResultとマージしたときにコメント外す
-                   * Navigator.push(
-                   * context,
-                   * MaterialPageRoute(builder: (context) => const SearchResult()),
-                   * );
-                   */
-                },
-              ),
+              // TextButton(
+              //   text: 'しらべる',
+              //   textSize: 30,
+              //   width: 200,
+              //   height: 80,
+              //   onPressed: () {
+              //     /**
+              //      * feature/searchResultとマージしたときにコメント外す
+              //      * Navigator.push(
+              //      * context,
+              //      * MaterialPageRoute(builder: (context) => const SearchResult()),
+              //      * );
+              //      */
+              //   },
+              // ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    backgroundColor: Color(0xFFBD2B2A),
+                    side: BorderSide(color: Color.fromARGB(255, 226, 165, 164), width: 2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    fixedSize: Size(200, 80)
+                  ),
+                  child: Text(
+                    'しらべる',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
         ),
@@ -136,18 +154,20 @@ class TextButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.black,
-            backgroundColor: Colors.white,
-            side: BorderSide(color: Color.fromARGB(255, 226, 165, 164), width: 2),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            fixedSize: Size(width, height)),
+          foregroundColor: Colors.black,
+          backgroundColor: Colors.white,
+          side: BorderSide(color: Color.fromARGB(255, 226, 165, 164), width: 2),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          fixedSize: Size(width, height)
+        ),
         child: Text(
           text,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: textSize,
+            color: Color(0xFFBD2B2A),
           ),
         ),
       ),
@@ -172,23 +192,28 @@ class CheckButton extends ConsumerWidget {
           ref.read(provider.notifier).state = !color;
         },
         style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.black,
-            backgroundColor:
-                color ? Color.fromARGB(255, 226, 165, 164) : Colors.white,
-            side: BorderSide(color: Color.fromARGB(255, 226, 165, 164), width: 2),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            fixedSize: const Size(150, 80)),
+          foregroundColor: Colors.black,
+          backgroundColor:
+              color ? Color(0xFFE2A5A4) : Colors.white,
+          side: BorderSide(color: Color(0xFFE2A5A4), width: 2),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          fixedSize: const Size(150, 80)
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.directions_bus_outlined, size: 40),
+            Icon(
+              Icons.directions_bus_outlined, size: 40,
+              color: color ? Colors.black : Color(0xFFBD2B2A),
+            ),
             Text(
               text,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 13,
+                color: color ? Colors.black : Color(0xFFBD2B2A),
               ),
             ),
           ],

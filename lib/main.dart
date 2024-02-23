@@ -66,23 +66,23 @@ class MainPage extends ConsumerWidget {
     }
 
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Center(child: Text("Green House Application")),
-      // ),
       body: bodyWidget,
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white,
+        backgroundColor: Color(0xFFBD2B2A),
         currentIndex: PageType.values.indexOf(currentPage),
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home, color: Colors.white),
             label: 'ホーム',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.expand),
+            icon: Icon(Icons.expand, color: Colors.white),
             label: 'Example',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.expand),
+            icon: Icon(Icons.expand, color: Colors.white),
             label: 'Example2',
           ),
         ],
