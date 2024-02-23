@@ -12,89 +12,100 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'ホーム',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
+        title: Center(
+          child: const Text(
+            'ホーム',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
         ),
-        backgroundColor: const Color.fromARGB(255, 255, 229, 255),
+        backgroundColor: const Color.fromARGB(255, 189, 43, 43),
       ),
       body: Center(
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CheckButton(text: '乗換あり', provider: transColorProvider),
-                CheckButton(text: '普通を外す', provider: futsuColorProvider),
-              ],
-            ),
-            TextButton(
-              text: 'じかん',
-              textSize: 30,
-              width: 300,
-              height: 80,
-              onPressed: () {
-                // 画面遷移
-              },
-            ),
-            TextButton(
-              text: 'のるところ',
-              textSize: 30,
-              width: 300,
-              height: 80,
-              onPressed: () {
-                // 画面遷移
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
+        child: Container(
+          color: Color.fromARGB(255, 255, 232, 174),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CheckButton(text: '乗換あり', provider: transColorProvider),
+                  CheckButton(text: '普通を外す', provider: futsuColorProvider),
+                ],
+              ),
+              TextButton(
+                text: 'じかん',
+                textSize: 30,
+                width: 300,
+                height: 80,
                 onPressed: () {
-                  //
+                  // 画面遷移
                 },
-                style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: const Color.fromARGB(255, 241, 241, 241),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    fixedSize: const Size(120, 50)),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.north, size: 30),
-                    Icon(Icons.south, size: 30)
-                  ],
+              ),
+              TextButton(
+                text: 'のるところ',
+                textSize: 30,
+                width: 300,
+                height: 80,
+                onPressed: () {
+                  // 画面遷移
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    //
+                  },
+                  style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.black,
+                      backgroundColor: Colors.white,
+                      side: BorderSide(color: Color.fromARGB(255, 226, 165, 164), width: 2),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      fixedSize: const Size(120, 50)),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.arrow_upward_filled,
+                        size: 30,
+                        color: Color.fromARGB(255, 189, 43, 43),
+                      ),
+                      Icon(Icons.south, size: 30, color: Color.fromARGB(255, 189, 43, 43))
+                    ],
+                  ),
                 ),
               ),
-            ),
-            TextButton(
-              text: 'おりるところ',
-              textSize: 30,
-              width: 300,
-              height: 80,
-              onPressed: () {
-                // 画面遷移
-              },
-            ),
-            TextButton(
-              text: 'しらべる',
-              textSize: 30,
-              width: 200,
-              height: 80,
-              onPressed: () {
-                /**
-                 * feature/searchResultとマージしたときにコメント外す
-                 * Navigator.push(
-                 * context,
-                 * MaterialPageRoute(builder: (context) => const SearchResult()),
-                 * );
-                 */
-              },
-            ),
-          ],
+              TextButton(
+                text: 'おりるところ',
+                textSize: 30,
+                width: 300,
+                height: 80,
+                onPressed: () {
+                  // 画面遷移
+                },
+              ),
+              TextButton(
+                text: 'しらべる',
+                textSize: 30,
+                width: 200,
+                height: 80,
+                onPressed: () {
+                  /**
+                   * feature/searchResultとマージしたときにコメント外す
+                   * Navigator.push(
+                   * context,
+                   * MaterialPageRoute(builder: (context) => const SearchResult()),
+                   * );
+                   */
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -126,7 +137,8 @@ class TextButton extends StatelessWidget {
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
             foregroundColor: Colors.black,
-            backgroundColor: const Color.fromARGB(255, 241, 241, 241),
+            backgroundColor: Colors.white,
+            side: BorderSide(color: Color.fromARGB(255, 226, 165, 164), width: 2),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -162,7 +174,8 @@ class CheckButton extends ConsumerWidget {
         style: ElevatedButton.styleFrom(
             foregroundColor: Colors.black,
             backgroundColor:
-                color ? Colors.blue : const Color.fromARGB(255, 241, 241, 241),
+                color ? Color.fromARGB(255, 226, 165, 164) : Colors.white,
+            side: BorderSide(color: Color.fromARGB(255, 226, 165, 164), width: 2),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),

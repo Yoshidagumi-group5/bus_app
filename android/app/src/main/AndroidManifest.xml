@@ -2,7 +2,7 @@
     <application
         android:label="bus_app"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/arrow_upward_filled">
         <activity
             android:name=".MainActivity"
             android:exported="true"
