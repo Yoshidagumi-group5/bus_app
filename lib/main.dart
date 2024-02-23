@@ -3,6 +3,9 @@ import 'package:bus_app/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'pages/example2.dart';
+import 'pages/okica.dart';
+
 Future<void> main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -28,6 +31,7 @@ enum PageType {
   homePage,
   example1,
   example2,
+  okica,
 }
 
 class BottomNavigationNotifier extends Notifier<PageType> {
@@ -61,14 +65,15 @@ class MainPage extends ConsumerWidget {
         bodyWidget = const ExamplePage1();
         break;
       case PageType.example2:
-        bodyWidget = const ExamplePage1();
+        bodyWidget = const ExamplePage2();
+        break;
+
+      case PageType.okica:
+        bodyWidget = const Okica();
         break;
     }
 
     return Scaffold(
-      //appBar: AppBar(
-      //  title: const Center(child: Text("Green House Application")),
-      //),
       body: bodyWidget,
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
@@ -85,6 +90,10 @@ class MainPage extends ConsumerWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.expand),
             label: 'Example2',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.expand_circle_down),
+            label: 'okica',
           ),
         ],
         onTap: (index) {

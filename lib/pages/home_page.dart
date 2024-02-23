@@ -21,14 +21,6 @@ class HomePage extends ConsumerWidget {
           ),
         ),
         backgroundColor: const Color.fromARGB(255, 255, 229, 255),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.history_outlined, size: 40),
-            onPressed: () {
-              // 画面遷移
-            },
-          ),
-        ],
       ),
       body: Center(
         child: Column(
