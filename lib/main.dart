@@ -1,4 +1,4 @@
-import 'package:bus_app/pages/bus_registration.dart';
+import 'package:bus_app/alarm.dart';
 import 'package:bus_app/pages/example.dart';
 import 'package:bus_app/pages/example2.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
 enum PageType {
   example1,
   example2,
-  busRegistration,
+  alarmTest,
 }
 
 class BottomNavigationNotifier extends Notifier<PageType> {
@@ -61,15 +61,12 @@ class MainPage extends ConsumerWidget {
       case PageType.example2:
         bodyWidget = const ExamplePage2();
         break;
-      case PageType.busRegistration:
-        bodyWidget = BusRegistration();
+      case PageType.alarmTest:
+        bodyWidget = AlarmTest();
         break;
     }
 
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Center(child: Text("Green House Application")),
-      // ),
       body: bodyWidget,
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
@@ -84,8 +81,8 @@ class MainPage extends ConsumerWidget {
             label: 'Example2',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.directions_bus_outlined),
-            label: 'バス登録',
+            icon: Icon(Icons.alarm_outlined),
+            label: 'アラームテスト',
           ),
         ],
         onTap: (index) {
