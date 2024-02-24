@@ -56,11 +56,16 @@ class BusRegistration extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'バス登録',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: const Center(
+          child: Text(
+            'バス登録',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
         ),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: const Color(0xFFBD2B2B),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -79,7 +84,7 @@ class BusRegistration extends ConsumerWidget {
               borderRadius: const BorderRadius.all(Radius.circular(8)),
               // selectedBorderColor: Colors.blue,
               selectedColor: Colors.black,
-              fillColor: Colors.blue[300],
+              fillColor: Color(0xFFE2A5A4),
               color: Colors.black,
               constraints: const BoxConstraints(
                 minHeight: 40.0,
