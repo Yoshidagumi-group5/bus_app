@@ -1,4 +1,4 @@
-import 'package:bus_app/alarm.dart';
+import 'package:bus_app/original_alarm.dart';
 import 'package:bus_app/pages/example.dart';
 import 'package:bus_app/pages/example2.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +28,6 @@ class MyApp extends StatelessWidget {
 enum PageType {
   example1,
   example2,
-  alarmTest,
 }
 
 class BottomNavigationNotifier extends Notifier<PageType> {
@@ -61,9 +60,6 @@ class MainPage extends ConsumerWidget {
       case PageType.example2:
         bodyWidget = const ExamplePage2();
         break;
-      case PageType.alarmTest:
-        bodyWidget = const AlarmTest();
-        break;
     }
 
     return Scaffold(
@@ -79,10 +75,6 @@ class MainPage extends ConsumerWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.expand_circle_down),
             label: 'Example2',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.alarm_outlined),
-            label: 'アラームテスト',
           ),
         ],
         onTap: (index) {
