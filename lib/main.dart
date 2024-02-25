@@ -62,7 +62,7 @@ class MainPage extends ConsumerWidget {
         bodyWidget = const ExamplePage2();
         break;
       case PageType.alarmTest:
-        bodyWidget = AlarmTest();
+        bodyWidget = const AlarmTest();
         break;
     }
 

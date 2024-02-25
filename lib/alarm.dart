@@ -14,49 +14,56 @@ List<String> alarms = [
   'Clock-Alarm05-9(Far-Low-Loop)',
 ];
 
+class Alarm {
+  void start() async {
+    await Future.delayed(Duration(minutes: 0, seconds: 3));
+    FlutterRingtonePlayer.play(
+      fromAsset: 'assets/alarms/${alarms[2]}.mp3',
+      asAlarm: true,
+      looping: false
+    );
+  }
+
+  void stop() {
+    FlutterRingtonePlayer.stop();
+  }
+}
+
 class AlarmTest extends ConsumerWidget {
   const AlarmTest({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final alarm = Alarm();
+
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () {
-                debugPrint('テスト');
-                FlutterRingtonePlayer.play(
-                  fromAsset: 'assets/alarms/${alarms[2]}.mp3',
-                  asAlarm: true,
-                  looping: false,
-                );
+              child: Text(alarms[2]),
+              onPressed: () async {
+                alarm.start();
                 showDialog(
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Text("タイトル"),
-                      content: Text("メッセージ内容"),
+                      title: Text("あと${5}分"),
+                      content: Text("バス到着まであと${5}分です"),
                       actions: [
-                        TextButton(
-                          child: Text("OK"),
+                        ElevatedButton(
                           onPressed: () {
+                            alarm.stop();
                             Navigator.pop(context);
                           },
+                          child: Text('ストップ'),
                         ),
                       ],
                     );
                   },
                 );
               },
-              child: Text(alarms[2]),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                FlutterRingtonePlayer.stop();
-              },
-              child: Text('ストップ'),
             ),
           ],
         ),
