@@ -62,7 +62,7 @@ class MainPage extends ConsumerWidget {
         bodyWidget = const ExamplePage2();
         break;
       case PageType.busRegistration:
-        bodyWidget = BusRegistration();
+        bodyWidget = const BusRegistration();
         break;
     }
 
