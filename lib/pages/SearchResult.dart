@@ -202,13 +202,13 @@ class SearchResult extends ConsumerWidget {
                 child: ListView(
                   shrinkWrap: true,
                   children: const [
-                    SearchResultClass(0, 77, 500, 30, 3, '14:30', '15:30',
+                    SearchResultClass(0, 77, 500, 30, '14:30', '15:30',
                         '沖縄高専入口', '那覇バスターミナル'),
-                    SearchResultClass(1, 77, 500, 30, 3, '14:30', '15:30',
+                    SearchResultClass(1, 77, 500, 30, '14:30', '15:30',
                         '沖縄高専入口', '那覇バスターミナル'),
-                    SearchResultClass(2, 77, 500, 30, 3, '14:30', '15:30',
+                    SearchResultClass(2, 77, 500, 30, '14:30', '15:30',
                         '沖縄高専入口', '那覇バスターミナル'),
-                    SearchResultClass(3, 77, 500, 30, 3, '14:30', '15:30',
+                    SearchResultClass(3, 77, 500, 30, '14:30', '15:30',
                         '沖縄高専入口', '那覇バスターミナル'),
                   ],
                 ),
@@ -236,22 +236,13 @@ class SearchResult extends ConsumerWidget {
 }
 
 class SearchResultClass extends ConsumerWidget {
-  const SearchResultClass(
-      this.resultNum,
-      this.busNum,
-      this.cost,
-      this.time,
-      this.delayTime,
-      this.startTime,
-      this.endTime,
-      this.startBusStop,
-      this.endBusStop,
+  const SearchResultClass(this.resultNum, this.busNum, this.cost, this.time,
+      this.startTime, this.endTime, this.startBusStop, this.endBusStop,
       {super.key});
   final int resultNum; //表示される結果一覧の内、何番目の結果か示す番号、バス登録ボタンなどに使用
   final int busNum; //バスの番号：77番
   final int cost; //バスの値段：500円
   final int time; //バスの所要時間：30分
-  final int delayTime; //バスの遅延時間：3分遅れ
   final String startTime; //バスの発車時刻,14:30
   final String endTime; //バスの到着時刻,15:30
   final String startBusStop; //乗るバス停の名前：沖縄高専入口
@@ -271,51 +262,58 @@ class SearchResultClass extends ConsumerWidget {
         ),
         child: Column(
           children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                      alignment: Alignment.center,
-                      width: 50,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: const Color(0xFFE2A5A4)),
-                        borderRadius: BorderRadius.circular(5),
-                        color: Colors.white,
-                      ),
-                      child: Text(
-                        busNum.toString(),
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      )),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 4.0, bottom: 4.0),
-                  child: Text(
-                    startBusStop,
-                    style: const TextStyle(
-                        fontSize: 17, fontWeight: FontWeight.bold),
+            Container(
+              decoration: const BoxDecoration(
+                  color: Color(0xFFFFF4D9),
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(10),
+                  )),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                        alignment: Alignment.center,
+                        width: 50,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: const Color(0xFFE2A5A4)),
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.white,
+                        ),
+                        child: Text(
+                          busNum.toString(),
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        )),
                   ),
-                ),
-                BusRegisterationButton(
-                  providers: colorProviders[resultNum],
-                ),
-                Expanded(
-                  child: Container(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "$cost円　$time分",
-                        style: const TextStyle(fontSize: 15),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4.0, bottom: 4.0),
+                    child: Text(
+                      startBusStop,
+                      style: const TextStyle(
+                          fontSize: 17, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  BusRegisterationButton(
+                    providers: colorProviders[resultNum],
+                  ),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "$cost円　$time分",
+                          style: const TextStyle(fontSize: 15),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            Container(
+            /*Container(
               decoration: const BoxDecoration(
                 color: Color(0xFFFFF4D9),
               ),
@@ -334,7 +332,7 @@ class SearchResultClass extends ConsumerWidget {
                   ),
                 ],
               ),
-            ),
+            ),*/
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -563,15 +561,18 @@ class BusRegisterationButton extends ConsumerWidget {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: const Color(0xFFE2A5A4)),
+          //border: Border.all(color: const Color(0xFFE2A5A4)),
+          borderRadius: BorderRadius.circular(10),
+          color: color ? Colors.red : Colors.white,
+        ),
         child: IconButton(
           onPressed: () {
             ref.read(providers.notifier).state = !color;
           },
           icon: Icon(
             Icons.directions_bus_filled_sharp,
-            color: color ? Colors.black : Colors.black45,
+            size: 25,
+            color: color ? Colors.white : Colors.red,
           ),
         ),
       ),
