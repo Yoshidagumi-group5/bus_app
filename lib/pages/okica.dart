@@ -6,44 +6,45 @@ class Okica extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFFFE8AE),
       appBar: AppBar(
+        backgroundColor: const Color(0xFFBD2B2B),
         centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 178, 177, 178),
         title: const Text(
-          '現在の残高',
-          style: TextStyle(color: Colors.black),
+          "現在の残高",
+          style: TextStyle(fontSize: 20, color: Color(0xFFFFFFFF)),
         ),
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.start, // 上側に配置
-
         children: [
-          const SizedBox(
-            width: 400,
-            height: 20,
-          ),
-          Row(
-            children: [
-              const SizedBox(
-                width: 20,
-                height: 200,
-              ),
-              SizedBox(
-                width: 375,
-                height: 200,
-                child: Container(
-                  alignment: Alignment.center,
-                  color: const Color.fromARGB(255, 174, 174, 174),
-                  child: const Text(
-                    '100円',
-                    style: TextStyle(
-                      fontSize: 60,
-                      fontWeight: FontWeight.w700,
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: const Color(0xFFE2A5A4)),
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 50.0, top: 50.0, bottom: 50.0),
+                    child: Text(
+                      "1000",
+                      style:
+                          TextStyle(fontSize: 70, fontWeight: FontWeight.bold),
                     ),
                   ),
-                ),
+                  Container(
+                    alignment: Alignment.bottomRight,
+                    child: Text(
+                      "円",
+                      style: TextStyle(fontSize: 50),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
           Row(
             children: [
