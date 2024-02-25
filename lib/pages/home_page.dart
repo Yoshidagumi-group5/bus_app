@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final transColorProvider = StateProvider<bool>((ref) => false);
@@ -33,11 +31,19 @@ class HomePage extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
-                      child: CheckButton(
-                          text: '乗換あり', provider: transColorProvider)),
+                    child: CheckButton(
+                      text: '乗換あり',
+                      provider: transColorProvider,
+                      iconData: Icons.directions_bus_outlined,
+                    )
+                  ),
                   Expanded(
-                      child: CheckButton(
-                          text: '普通を外す', provider: futsuColorProvider)),
+                    child: CheckButton(
+                      text: '普通を外す',
+                      provider: futsuColorProvider,
+                      iconData: Icons.trending_up,
+                    )
+                  ),
                 ],
               ),
               TextButton(
@@ -93,21 +99,6 @@ class HomePage extends ConsumerWidget {
                   // 画面遷移
                 },
               ),
-              // TextButton(
-              //   text: 'しらべる',
-              //   textSize: 30,
-              //   width: 200,
-              //   height: 80,
-              //   onPressed: () {
-              //     /**
-              //      * feature/searchResultとマージしたときにコメント外す
-              //      * Navigator.push(
-              //      * context,
-              //      * MaterialPageRoute(builder: (context) => const SearchResult()),
-              //      * );
-              //      */
-              //   },
-              // ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton(
@@ -137,10 +128,6 @@ class HomePage extends ConsumerWidget {
                   ),
                 ),
               ),
-              /*Container(
-                height: 500,
-                color: const Color.fromARGB(255, 255, 232, 174),
-              )*/
             ],
           ),
         ),
@@ -195,10 +182,16 @@ class TextButton extends StatelessWidget {
 }
 
 class CheckButton extends ConsumerWidget {
-  const CheckButton({super.key, required this.text, required this.provider});
+  const CheckButton({
+    super.key,
+    required this.text,
+    required this.provider,
+    required this.iconData
+  });
 
   final String text;
   final StateProvider<bool> provider;
+  final IconData iconData;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -212,7 +205,7 @@ class CheckButton extends ConsumerWidget {
         },
         style: ElevatedButton.styleFrom(
             foregroundColor: Colors.black,
-            backgroundColor: color ? const Color(0xFFE2A5A4) : Colors.white,
+            backgroundColor: color ? const Color(0xFFBD2B2A) : Colors.white,
             side: const BorderSide(color: Color(0xFFE2A5A4), width: 2),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
@@ -222,16 +215,16 @@ class CheckButton extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.directions_bus_outlined,
+              iconData,
               size: 40,
-              color: color ? Colors.black : const Color(0xFFBD2B2A),
+              color: color ? Colors.white : const Color(0xFFBD2B2A),
             ),
             Text(
               text,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 13,
-                color: color ? Colors.black : const Color(0xFFBD2B2A),
+                color: color ? Colors.white : const Color(0xFFBD2B2A),
               ),
             ),
           ],
