@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final transColorProvider = StateProvider<bool>((ref) => false);
@@ -22,7 +24,7 @@ class HomePage extends ConsumerWidget {
         ),
         backgroundColor: const Color.fromARGB(255, 189, 43, 43),
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Container(
           color: const Color.fromARGB(255, 255, 232, 174),
           child: Column(
@@ -30,8 +32,12 @@ class HomePage extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CheckButton(text: '乗換あり', provider: transColorProvider),
-                  CheckButton(text: '普通を外す', provider: futsuColorProvider),
+                  Expanded(
+                      child: CheckButton(
+                          text: '乗換あり', provider: transColorProvider)),
+                  Expanded(
+                      child: CheckButton(
+                          text: '普通を外す', provider: futsuColorProvider)),
                 ],
               ),
               TextButton(
@@ -61,7 +67,8 @@ class HomePage extends ConsumerWidget {
                   style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
                       backgroundColor: Colors.white,
-                      side: const BorderSide(color: Color.fromARGB(255, 226, 165, 164), width: 2),
+                      side: const BorderSide(
+                          color: Color.fromARGB(255, 226, 165, 164), width: 2),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -69,8 +76,10 @@ class HomePage extends ConsumerWidget {
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.north, size: 30, color: Color.fromARGB(255, 189, 43, 43)),
-                      Icon(Icons.south, size: 30, color: Color.fromARGB(255, 189, 43, 43))
+                      Icon(Icons.north,
+                          size: 30, color: Color.fromARGB(255, 189, 43, 43)),
+                      Icon(Icons.south,
+                          size: 30, color: Color.fromARGB(255, 189, 43, 43))
                     ],
                   ),
                 ),
@@ -103,21 +112,21 @@ class HomePage extends ConsumerWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton(
                   onPressed: () {
-                  /** feature/searchResultとマージしたときにコメント外す */
+                    /** feature/searchResultとマージしたときにコメント外す */
                     // Navigator.push(
                     // context,
                     // MaterialPageRoute(builder: (context) => const SearchResult()),
                     // );
                   },
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: const Color(0xFFBD2B2A),
-                    side: const BorderSide(color: Color.fromARGB(255, 226, 165, 164), width: 2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    fixedSize: const Size(200, 80)
-                  ),
+                      foregroundColor: Colors.black,
+                      backgroundColor: const Color(0xFFBD2B2A),
+                      side: const BorderSide(
+                          color: Color.fromARGB(255, 226, 165, 164), width: 2),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      fixedSize: const Size(200, 80)),
                   child: const Text(
                     'しらべる',
                     style: TextStyle(
@@ -127,7 +136,11 @@ class HomePage extends ConsumerWidget {
                     ),
                   ),
                 ),
-              )
+              ),
+              /*Container(
+                height: 500,
+                color: const Color.fromARGB(255, 255, 232, 174),
+              )*/
             ],
           ),
         ),
@@ -160,14 +173,14 @@ class TextButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.black,
-          backgroundColor: Colors.white,
-          side: const BorderSide(color: Color.fromARGB(255, 226, 165, 164), width: 2),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          fixedSize: Size(width, height)
-        ),
+            foregroundColor: Colors.black,
+            backgroundColor: Colors.white,
+            side: const BorderSide(
+                color: Color.fromARGB(255, 226, 165, 164), width: 2),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            fixedSize: Size(width, height)),
         child: Text(
           text,
           style: TextStyle(
@@ -198,20 +211,19 @@ class CheckButton extends ConsumerWidget {
           ref.read(provider.notifier).state = !color;
         },
         style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.black,
-          backgroundColor:
-              color ? const Color(0xFFE2A5A4) : Colors.white,
-          side: const BorderSide(color: Color(0xFFE2A5A4), width: 2),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          fixedSize: const Size(150, 80)
-        ),
+            foregroundColor: Colors.black,
+            backgroundColor: color ? const Color(0xFFE2A5A4) : Colors.white,
+            side: const BorderSide(color: Color(0xFFE2A5A4), width: 2),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            fixedSize: const Size(150, 80)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.directions_bus_outlined, size: 40,
+              Icons.directions_bus_outlined,
+              size: 40,
               color: color ? Colors.black : const Color(0xFFBD2B2A),
             ),
             Text(
