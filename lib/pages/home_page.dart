@@ -11,8 +11,8 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: const Text(
+        title: const Center(
+          child: Text(
             'ホーム',
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -24,7 +24,7 @@ class HomePage extends ConsumerWidget {
       ),
       body: Center(
         child: Container(
-          color: Color.fromARGB(255, 255, 232, 174),
+          color: const Color.fromARGB(255, 255, 232, 174),
           child: Column(
             children: [
               Row(
@@ -61,7 +61,7 @@ class HomePage extends ConsumerWidget {
                   style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
                       backgroundColor: Colors.white,
-                      side: BorderSide(color: Color.fromARGB(255, 226, 165, 164), width: 2),
+                      side: const BorderSide(color: Color.fromARGB(255, 226, 165, 164), width: 2),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -102,17 +102,23 @@ class HomePage extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                  /** feature/searchResultとマージしたときにコメント外す */
+                    // Navigator.push(
+                    // context,
+                    // MaterialPageRoute(builder: (context) => const SearchResult()),
+                    // );
+                  },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    backgroundColor: Color(0xFFBD2B2A),
-                    side: BorderSide(color: Color.fromARGB(255, 226, 165, 164), width: 2),
+                    backgroundColor: const Color(0xFFBD2B2A),
+                    side: const BorderSide(color: Color.fromARGB(255, 226, 165, 164), width: 2),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    fixedSize: Size(200, 80)
+                    fixedSize: const Size(200, 80)
                   ),
-                  child: Text(
+                  child: const Text(
                     'しらべる',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -156,7 +162,7 @@ class TextButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.black,
           backgroundColor: Colors.white,
-          side: BorderSide(color: Color.fromARGB(255, 226, 165, 164), width: 2),
+          side: const BorderSide(color: Color.fromARGB(255, 226, 165, 164), width: 2),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -167,7 +173,7 @@ class TextButton extends StatelessWidget {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: textSize,
-            color: Color(0xFFBD2B2A),
+            color: const Color(0xFFBD2B2A),
           ),
         ),
       ),
@@ -194,8 +200,8 @@ class CheckButton extends ConsumerWidget {
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.black,
           backgroundColor:
-              color ? Color(0xFFE2A5A4) : Colors.white,
-          side: BorderSide(color: Color(0xFFE2A5A4), width: 2),
+              color ? const Color(0xFFE2A5A4) : Colors.white,
+          side: const BorderSide(color: Color(0xFFE2A5A4), width: 2),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -206,14 +212,14 @@ class CheckButton extends ConsumerWidget {
           children: [
             Icon(
               Icons.directions_bus_outlined, size: 40,
-              color: color ? Colors.black : Color(0xFFBD2B2A),
+              color: color ? Colors.black : const Color(0xFFBD2B2A),
             ),
             Text(
               text,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 13,
-                color: color ? Colors.black : Color(0xFFBD2B2A),
+                color: color ? Colors.black : const Color(0xFFBD2B2A),
               ),
             ),
           ],
