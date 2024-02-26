@@ -15,99 +15,172 @@ class Okica extends StatelessWidget {
           style: TextStyle(fontSize: 20, color: Color(0xFFFFFFFF)),
         ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Container(
-              decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFFE2A5A4)),
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding:
+                  const EdgeInsets.only(top: 30.0, right: 40.0, left: 40.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    border:
+                        Border.all(color: const Color(0xFFE2A5A4), width: 3),
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(
+                            top: 30.0,
+                          ),
+                          child: Text(
+                            "1000",
+                            style: TextStyle(
+                                fontSize: 80, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width - 150,
+                            ),
+                            const Text(
+                              "円",
+                              style: TextStyle(
+                                fontSize: 30,
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.all(4.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 50.0, top: 50.0, bottom: 50.0),
-                    child: Text(
-                      "1000",
-                      style:
-                          TextStyle(fontSize: 70, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Container(
-                    alignment: Alignment.bottomRight,
-                    child: Text(
-                      "円",
-                      style: TextStyle(fontSize: 50),
-                    ),
+                  Text(
+                    '利用履歴',
+                    style: TextStyle(fontSize: 25),
                   ),
                 ],
               ),
             ),
-          ),
-          Row(
-            children: [
-              const SizedBox(
-                width: 20,
-                height: 100,
-              ),
-              SizedBox(
-                width: 375,
-                height: 50,
+            Padding(
+              padding: const EdgeInsets.only(right: 40, left: 40, bottom: 10),
+              child: LimitedBox(
+                maxHeight: MediaQuery.of(context).size.height * 0.55,
                 child: Container(
-                  alignment: Alignment.center,
-                  color: const Color.fromARGB(255, 174, 174, 174),
-                  child: const Text(
-                    '利用履歴',
-                    style: TextStyle(fontSize: 30),
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: const Color(0xFFE2A5A4), width: 3),
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white),
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: const [
+                        History("2024/04/01", "沖縄高専前", "名護十字路"),
+                        History("2024/05/01", "沖縄高専前", "名護十字路"),
+                        History("2024/06/01", "沖縄高専前", "名護十字路"),
+                        History("2024/06/01", "沖縄高専前", "名護十字路"),
+                        History("2024/06/01", "沖縄高専前", "名護十字路"),
+                        History("2024/06/01", "沖縄高専前", "名護十字路"),
+                        History("2024/06/01", "沖縄高専前", "名護十字路"),
+                        SizedBox(
+                          height: 15,
+                        )
+                      ],
+                    )),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class History extends StatelessWidget {
+  const History(this.date, this.startBusStop, this.endBusStop, {super.key});
+
+  final String date;
+  final String startBusStop;
+  final String endBusStop;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 15.0,
+        right: 15.0,
+        left: 15.0,
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: const Color(0xFFFFF4D9)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 4.0, bottom: 4.0, left: 16.0),
+                  child: Text(
+                    date,
+                    style: const TextStyle(fontSize: 15),
                   ),
                 ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                right: 6.0,
+                left: 6.0,
+                bottom: 20.0,
+                top: 8.0,
               ),
-            ],
-          ),
-          const Text('2021/1/1'),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('沖縄高専前'),
-              Icon(
-                Icons.arrow_forward_sharp,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            startBusStop,
+                          )),
+                    ),
+                  ),
+                  const Expanded(
+                    child: Icon(
+                      Icons.arrow_forward_outlined,
+                      size: 30,
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Text(
+                        endBusStop,
+                      ),
+                    ),
+                  )
+                ],
               ),
-              Text('名護十字路'),
-            ],
-          ),
-          const SizedBox(
-            width: 400,
-            height: 20,
-          ),
-          const Text('2021/1/1'),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('沖縄高専前'),
-              Icon(
-                Icons.arrow_forward_sharp,
-              ),
-              Text('名護十字路'),
-            ],
-          ),
-          const SizedBox(
-            width: 400,
-            height: 20,
-          ),
-          const Text('2021/1/1'),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('沖縄高専前'),
-              Icon(
-                Icons.arrow_forward_sharp,
-              ),
-              Text('名護十字路'),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

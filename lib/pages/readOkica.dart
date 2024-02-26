@@ -10,7 +10,7 @@ class ReadOkica extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: NfcReadPage(),
     );
   }
@@ -50,7 +50,7 @@ class _NfcReadPageState extends State<NfcReadPage> {
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return AlertDialog(
+              return const AlertDialog(
                 title: Text('カードをかざしてください'),
               );
             },
