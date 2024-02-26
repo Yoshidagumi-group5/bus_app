@@ -82,8 +82,8 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
 
-  # assets:
-  #   - assets/
+  assets:
+    - assets/
   
   # fonts:
   #   - family: MyFlutterApp

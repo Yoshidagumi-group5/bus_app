@@ -24,7 +24,13 @@ class HomePage extends ConsumerWidget {
       ),
       body: SingleChildScrollView(
         child: Container(
-          color: const Color.fromARGB(255, 255, 232, 174),
+          decoration: const BoxDecoration(
+            color: const Color.fromARGB(255, 255, 232, 174),
+            image: DecorationImage(
+              image: AssetImage('assets/images/shisa_touka.png'),
+              fit: BoxFit.cover
+            ),
+          ),
           child: Column(
             children: [
               Row(
