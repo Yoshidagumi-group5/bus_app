@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:bus_app/pages/original_alarm.dart';
@@ -8,11 +10,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-Future<void> setup() async {
-  tz.initializeTimeZones();
-  var tokyo = tz.getLocation('Asia/Tokyo');
-  tz.setLocalLocation(tokyo);
-}
 
 // SearchResult(仮)
 class SearchResult extends StatelessWidget {
@@ -232,6 +229,11 @@ final wakeUpAlarmProvider = StateProvider<bool>(
   (ref) => false,
 );
 
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+
 // 各ルートのアラームウィジェット
 class Alarm extends ConsumerWidget {
   // バス停の情報を取得するための引数を追加する
@@ -239,6 +241,12 @@ class Alarm extends ConsumerWidget {
 
   final String text;
   final List<String> busStops;
+
+  Future<void> setup() async {
+    tz.initializeTimeZones();
+    var tokyo = tz.getLocation('Asia/Tokyo');
+    tz.setLocalLocation(tokyo);
+  }
   
   // インスタンス生成
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -250,15 +258,14 @@ class Alarm extends ConsumerWidget {
     tz.setLocalLocation(tokyo);
     
     // 初期化
-    flutterLocalNotificationsPlugin.initialize(
+    await flutterLocalNotificationsPlugin.initialize(
       const InitializationSettings(
-        android: AndroidInitializationSettings('app_icon'), // app_icon.pngを配置
-        // iOS: IOSInitializationSettings()
+        android: AndroidInitializationSettings('@mipmap/ic_launcher'), // app_icon.pngを配置
       ),
     );
     // スケジュール設定する
     int id = (math.Random()).nextInt(10);
-    flutterLocalNotificationsPlugin.zonedSchedule(
+    await flutterLocalNotificationsPlugin.zonedSchedule(
         id, // id
         'Local Notification Title $id', // title
         'Local Notification Body $id', // body
@@ -267,16 +274,42 @@ class Alarm extends ConsumerWidget {
           android: AndroidNotificationDetails(
             'my_channel_id', 'my_channel_name',
             channelDescription: 'my_channel_description',
-            importance: Importance.max,
-            priority: Priority.high
+            // importance: Importance.max,
+            // priority: Priority.high
           ),
-          // iOS: IOSNotificationDetails()
         ),
         uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime);
   }
 
+  Future<void> _requestPermissions() async {
+    if (Platform.isIOS || Platform.isMacOS) {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              MacOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+    } else if (Platform.isAndroid) {
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+          flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+      await androidImplementation?.requestNotificationsPermission();
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    _requestPermissions();
     final alarm = OriginalAlarm();
 
     final arrivalAlarm = ref.watch(busArrivalAlarmProvider);
@@ -296,13 +329,9 @@ class Alarm extends ConsumerWidget {
               onChanged: (bool value) async {
                 ref.read(busArrivalAlarmProvider.notifier).state = value;
                 if (value) {
-                  debugPrint('setupまえ');
                   await setup();
-                  debugPrint('setupあと');
                   await alarm.start(3);
-                  debugPrint('アラームあと');
                   _scheduleLocalNotification();
-                  debugPrint('通知あと');
                   if (context.mounted) {
                     debugPrint('ダイアログ表示まえ');
                     showDialog(
@@ -323,7 +352,6 @@ class Alarm extends ConsumerWidget {
                         );
                       }
                     );
-                    debugPrint('ダイアログ表示あと');
                   }
                 }
               },
@@ -381,7 +409,6 @@ class Alarm extends ConsumerWidget {
           decoration: const BoxDecoration(
             color: Color(0xFFFFF4D9),
             borderRadius: BorderRadius.all(Radius.circular(10)),
-            // border: Border.all(color: Color(0xFFE2A5A4), width: 2),
           ),
           width: 360,
           child: Column(
