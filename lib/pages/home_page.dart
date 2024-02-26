@@ -20,13 +20,14 @@ class HomePage extends ConsumerWidget {
             ),
           ),
         ),
-        backgroundColor: const Color.fromARGB(255, 189, 43, 43),
+        backgroundColor: const Color(0xFFBD2B2B),
       ),
       body: SingleChildScrollView(
         child: Container(
           decoration: const BoxDecoration(
-            color: const Color.fromARGB(255, 255, 232, 174),
+            color: const Color(0xFFFFE8AE),
             image: DecorationImage(
+              alignment: Alignment.topCenter,
               image: AssetImage('assets/images/shisa_touka_trimming.png'),
               fit: BoxFit.fitWidth,
             ),
