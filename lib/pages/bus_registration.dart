@@ -99,41 +99,49 @@ class BusRegistration extends ConsumerWidget {
         backgroundColor: const Color(0xFFBD2B2B),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: ToggleButtons(
-                  direction: Axis.horizontal,
-                  onPressed: (int index) {
-                    ref.read(routeToggleProvider.notifier).state =
-                        List.generate(route.length, (i) => i == index);
-                    ref.read(routeWidgetProvider.notifier).state = routeWidgets[index];
-                          
-                    // ルートを切り替える時、optionWidgetはアラームを表示させる
-                    ref.read(optionProvider.notifier).state = [true, false];
-                    ref.read(optionWidgetProvider.notifier).state = Alarm(text: 'ルート${index + 1}', busStops: routes[index]);
-                  },
-                  borderRadius: const BorderRadius.all(Radius.circular(5)),
-                  borderColor: const Color(0xFFE2A5A4),
-                  selectedBorderColor: const Color(0xFFE2A5A4),
-                  borderWidth: 2,
-                  selectedColor: Colors.black,
-                  fillColor: const Color(0xFFE2A5A4),
-                  color: Colors.black,
-                  constraints: const BoxConstraints(
-                    minHeight: 40.0,
-                    minWidth: 80.0,
+        child: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/shisa_touka.png'),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: ToggleButtons(
+                    direction: Axis.horizontal,
+                    onPressed: (int index) {
+                      ref.read(routeToggleProvider.notifier).state =
+                          List.generate(route.length, (i) => i == index);
+                      ref.read(routeWidgetProvider.notifier).state = routeWidgets[index];
+                            
+                      // ルートを切り替える時、optionWidgetはアラームを表示させる
+                      ref.read(optionProvider.notifier).state = [true, false];
+                      ref.read(optionWidgetProvider.notifier).state = Alarm(text: 'ルート${index + 1}', busStops: routes[index]);
+                    },
+                    borderRadius: const BorderRadius.all(Radius.circular(5)),
+                    borderColor: const Color(0xFFE2A5A4),
+                    selectedBorderColor: const Color(0xFFE2A5A4),
+                    borderWidth: 2,
+                    selectedColor: Colors.black,
+                    fillColor: const Color(0xFFE2A5A4),
+                    color: Colors.black,
+                    constraints: const BoxConstraints(
+                      minHeight: 40.0,
+                      minWidth: 80.0,
+                    ),
+                    isSelected: route,
+                    children: routes.asMap().entries.map((entry) => Text('ルート${entry.key + 1}', style: const TextStyle(fontSize: 16))).toList(),
                   ),
-                  isSelected: route,
-                  children: routes.asMap().entries.map((entry) => Text('ルート${entry.key + 1}', style: const TextStyle(fontSize: 16))).toList(),
                 ),
               ),
-            ),
-            routeWidget,
-          ],
+              routeWidget,
+            ],
+          ),
         ),
       ),
     );
