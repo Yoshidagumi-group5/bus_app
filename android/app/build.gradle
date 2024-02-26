@@ -72,18 +72,7 @@ flutter {
     source '../..'
 }
 
-dependencies {
-
-    /** 追加した 【Flutter】AndroidのPush通知使用許諾を表示する方法(https://zenn.dev/r0227n/articles/flutter_android_notification_permission) */
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.20"
-    implementation 'androidx.activity:activity-ktx:1.7.2'
-    implementation 'androidx.fragment:fragment-ktx:1.6.0'
-
-    /** 追加した Flutterで毎朝8時に飛ぶローカル通知を実装する【OB-1アプデ】(https://zenn.dev/flutteruniv_dev/articles/434310831e41f3) */
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
-    implementation 'androidx.window:window:1.0.0'
-    implementation 'androidx.window:window-java:1.0.0'
-}
+dependencies {}
 
 configurations.implementation {
     exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'

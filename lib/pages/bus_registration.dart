@@ -1,15 +1,11 @@
-import 'dart:io';
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:bus_app/pages/original_alarm.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 
+// ここから追加
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// ここまで追加
 
 // SearchResult(仮)
 class SearchResult extends StatelessWidget {
@@ -36,7 +32,6 @@ const List<List<String>> routes = [
 
 // 表示するルートを切り替えるためのToggleの状態を管理
 final routeToggleProvider = StateProvider<List<bool>>(
-  // (ref) => <bool>[true, false, false],
   (ref) {
     final boolList = [true];
     for (int i = 1; i < routes.length; i++) {
@@ -242,74 +237,24 @@ class Alarm extends ConsumerWidget {
   final String text;
   final List<String> busStops;
 
-  Future<void> setup() async {
-    tz.initializeTimeZones();
-    var tokyo = tz.getLocation('Asia/Tokyo');
-    tz.setLocalLocation(tokyo);
-  }
-  
-  // インスタンス生成
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin(); // 追加
 
-  // ローカル通知をスケジュールする
-  void _scheduleLocalNotification() async {
-    tz.initializeTimeZones();
-    var tokyo = tz.getLocation('Asia/Tokyo');
-    tz.setLocalLocation(tokyo);
-    
-    // 初期化
-    await flutterLocalNotificationsPlugin.initialize(
-      const InitializationSettings(
-        android: AndroidInitializationSettings('@mipmap/ic_launcher'), // app_icon.pngを配置
-      ),
-    );
-    // スケジュール設定する
-    int id = (math.Random()).nextInt(10);
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-        id, // id
-        'Local Notification Title $id', // title
-        'Local Notification Body $id', // body
-        tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)), // 5秒後設定
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            'my_channel_id', 'my_channel_name',
-            channelDescription: 'my_channel_description',
-            // importance: Importance.max,
-            // priority: Priority.high
-          ),
-        ),
-        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime);
+  // ここから追加
+  void _requestIOSPermission() {
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+          alert: false,
+          badge: true,
+          sound: false,
+        );
   }
-
-  Future<void> _requestPermissions() async {
-    if (Platform.isIOS || Platform.isMacOS) {
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-            alert: true,
-            badge: true,
-            sound: true,
-          );
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              MacOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-            alert: true,
-            badge: true,
-            sound: true,
-          );
-    } else if (Platform.isAndroid) {
-      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-          flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>();
-      await androidImplementation?.requestNotificationsPermission();
-    }
-  }
+  // ここまで追加
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _requestPermissions();
     final alarm = OriginalAlarm();
 
     final arrivalAlarm = ref.watch(busArrivalAlarmProvider);
@@ -329,9 +274,7 @@ class Alarm extends ConsumerWidget {
               onChanged: (bool value) async {
                 ref.read(busArrivalAlarmProvider.notifier).state = value;
                 if (value) {
-                  await setup();
                   await alarm.start(3);
-                  _scheduleLocalNotification();
                   if (context.mounted) {
                     debugPrint('ダイアログ表示まえ');
                     showDialog(
