@@ -83,7 +83,8 @@ flutter:
   # example:
 
   assets:
-    - assets/
+    - assets/icons/
+    - assets/images/
   
   # fonts:
   #   - family: MyFlutterApp

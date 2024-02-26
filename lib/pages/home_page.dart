@@ -27,8 +27,8 @@ class HomePage extends ConsumerWidget {
           decoration: const BoxDecoration(
             color: const Color.fromARGB(255, 255, 232, 174),
             image: DecorationImage(
-              image: AssetImage('assets/images/shisa_touka.png'),
-              fit: BoxFit.cover
+              image: AssetImage('assets/images/shisa_touka_trimming.png'),
+              fit: BoxFit.fitWidth,
             ),
           ),
           child: Column(
