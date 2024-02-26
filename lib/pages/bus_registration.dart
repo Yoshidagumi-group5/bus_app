@@ -102,8 +102,9 @@ class BusRegistration extends ConsumerWidget {
         child: Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/images/shisa_touka.png'),
-              fit: BoxFit.cover,
+              alignment: Alignment.topCenter,
+              image: AssetImage('assets/images/shisa_touka_trimming.png'),
+              fit: BoxFit.fitWidth,
             ),
           ),
           child: Column(
