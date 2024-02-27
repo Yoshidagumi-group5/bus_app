@@ -1,4 +1,4 @@
-import 'package:bus_app/pages/bus_registration.dart';
+import 'package:bus_app/pages/bus_registration/bus_registration.dart';
 import 'package:bus_app/pages/example.dart';
 import 'package:bus_app/pages/example2.dart';
 import 'package:flutter/material.dart';
