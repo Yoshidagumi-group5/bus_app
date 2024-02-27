@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+// 「乗換あり」ボタンと「普通を外す」ボタンの状態管理
 final transColorProvider = StateProvider<bool>((ref) => false);
 final futsuColorProvider = StateProvider<bool>((ref) => false);
 
@@ -22,122 +23,119 @@ class HomePage extends ConsumerWidget {
         ),
         backgroundColor: const Color(0xFFBD2B2B),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          decoration: const BoxDecoration(
-            color: const Color(0xFFFFE8AE),
-            image: DecorationImage(
-              alignment: Alignment.topCenter,
-              image: AssetImage('assets/images/shisa_touka_trimming.png'),
-              fit: BoxFit.fitWidth,
-            ),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset('assets/images/shisa_touka_trimming.png', fit: BoxFit.cover),
           ),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: CheckButton(
-                      text: '乗換あり',
-                      provider: transColorProvider,
-                      iconData: Icons.directions_bus_outlined,
-                    )
-                  ),
-                  Expanded(
-                    child: CheckButton(
-                      text: '普通を外す',
-                      provider: futsuColorProvider,
-                      iconData: Icons.trending_up,
-                    )
-                  ),
-                ],
-              ),
-              TextButton(
-                text: 'じかん',
-                textSize: 30,
-                width: 200,
-                height: 70,
-                onPressed: () {
-                  // 画面遷移
-                },
-              ),
-              TextButton(
-                text: 'のるところ',
-                textSize: 30,
-                width: 300,
-                height: 80,
-                onPressed: () {
-                  // 画面遷移
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    //
-                  },
-                  style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.black,
-                      backgroundColor: Colors.white,
-                      side: const BorderSide(
-                          color: Color.fromARGB(255, 226, 165, 164), width: 2),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      fixedSize: const Size(120, 50)),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.north,
-                          size: 30, color: Color.fromARGB(255, 189, 43, 43)),
-                      Icon(Icons.south,
-                          size: 30, color: Color.fromARGB(255, 189, 43, 43))
-                    ],
-                  ),
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: CheckButton(
+                        text: '乗換あり',
+                        provider: transColorProvider,
+                        iconData: Icons.directions_bus_outlined,
+                      )
+                    ),
+                    Expanded(
+                      child: CheckButton(
+                        text: '普通を外す',
+                        provider: futsuColorProvider,
+                        iconData: Icons.trending_up,
+                      )
+                    ),
+                  ],
                 ),
-              ),
-              TextButton(
-                text: 'おりるところ',
-                textSize: 30,
-                width: 300,
-                height: 80,
-                onPressed: () {
-                  // 画面遷移
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ElevatedButton(
+                TextButton(
+                  text: 'じかん',
+                  textSize: 30,
+                  width: 200,
+                  height: 70,
                   onPressed: () {
-                    /** feature/searchResultとマージしたときにコメント外す */
-                    // Navigator.push(
-                    // context,
-                    // MaterialPageRoute(builder: (context) => const SearchResult()),
-                    // );
+                    // 画面遷移
                   },
-                  style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.black,
-                      backgroundColor: const Color(0xFFBD2B2A),
-                      side: const BorderSide(
-                          color: Color.fromARGB(255, 226, 165, 164), width: 2),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      fixedSize: const Size(200, 80)),
-                  child: const Text(
-                    'しらべる',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 30,
-                      color: Colors.white,
+                ),
+                TextButton(
+                  text: 'のるところ',
+                  textSize: 30,
+                  width: 300,
+                  height: 80,
+                  onPressed: () {
+                    // 画面遷移
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      //
+                    },
+                    style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.black,
+                        backgroundColor: Colors.white,
+                        side: const BorderSide(
+                            color: Color.fromARGB(255, 226, 165, 164), width: 2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        fixedSize: const Size(120, 50)),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.north,
+                            size: 30, color: Color.fromARGB(255, 189, 43, 43)),
+                        Icon(Icons.south,
+                            size: 30, color: Color.fromARGB(255, 189, 43, 43))
+                      ],
                     ),
                   ),
                 ),
-              ),
-            ],
+                TextButton(
+                  text: 'おりるところ',
+                  textSize: 30,
+                  width: 300,
+                  height: 80,
+                  onPressed: () {
+                    // 画面遷移
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      /** feature/searchResultとマージしたときにコメント外す */
+                      // Navigator.push(
+                      // context,
+                      // MaterialPageRoute(builder: (context) => const SearchResult()),
+                      // );
+                    },
+                    style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.black,
+                        backgroundColor: const Color(0xFFBD2B2A),
+                        side: const BorderSide(
+                            color: Color.fromARGB(255, 226, 165, 164), width: 2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        fixedSize: const Size(200, 80)),
+                    child: const Text(
+                      'しらべる',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
