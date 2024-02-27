@@ -2,8 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NFCReaderUsageDescription</key>
-	<string>We are going to use you NFC!</string>
+	<key>Privacy - NFC Scan Usage Description</key>
+	<string>OKICAの読み取りに使用します</string>
+	<key>ISO18092 system codes for NFC Tag Reader Session</key>
+	<array>
+	<string>8FC1</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
