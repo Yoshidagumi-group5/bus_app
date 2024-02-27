@@ -75,7 +75,7 @@ class MainPage extends ConsumerWidget {
     return Scaffold(
       body: bodyWidget,
       bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.white,
+        selectedItemColor: const Color.fromARGB(255, 116, 85, 85),
         unselectedItemColor: Colors.white,
         backgroundColor: Color(0xFFBD2B2A),
         currentIndex: PageType.values.indexOf(currentPage),
