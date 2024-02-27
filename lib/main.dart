@@ -1,3 +1,4 @@
+import 'package:bus_app/pages/bus_registration.dart';
 import 'package:bus_app/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,6 +32,7 @@ enum PageType {
   homePage,
   okica,
   readOkica,
+  busRegistration,
 }
 
 class BottomNavigationNotifier extends Notifier<PageType> {
@@ -67,6 +69,9 @@ class MainPage extends ConsumerWidget {
       case PageType.readOkica:
         bodyWidget = const ReadOkica();
         break;
+      case PageType.busRegistration:
+        bodyWidget = const BusRegistration();
+        break;
     }
 
     return Scaffold(
@@ -89,6 +94,10 @@ class MainPage extends ConsumerWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.expand_circle_down),
             label: 'readOkica',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.directions_bus_outlined),
+            label: 'バス登録',
           ),
         ],
         onTap: (index) {

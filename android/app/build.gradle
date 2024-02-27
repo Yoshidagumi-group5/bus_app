@@ -27,7 +27,13 @@ android {
     compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
+    compileSdkVersion 33    // 追加した
+
     compileOptions {
+        /** 追加した こいつエラー出る（直し方わからない）*/
+        // Flag to enable support for the new language APIs
+        // coreLibraryDesugaringEnabled true
+
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -49,7 +55,8 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        minSdkVersion flutter.minSdkVersion
+        
+        multiDexEnabled true    // 追加した
     }
 
     buildTypes {
@@ -66,3 +73,8 @@ flutter {
 }
 
 dependencies {}
+
+configurations.implementation {
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+}
