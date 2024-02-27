@@ -57,7 +57,7 @@ class MainPage extends ConsumerWidget {
     Widget bodyWidget;
     switch (currentPage) {
       case PageType.homePage:
-        bodyWidget = const HomePage();
+        bodyWidget = HomePage();
         break;
       case PageType.example1:
         bodyWidget = const ExamplePage1();

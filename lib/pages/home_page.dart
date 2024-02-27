@@ -5,8 +5,44 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final transColorProvider = StateProvider<bool>((ref) => false);
 final futsuColorProvider = StateProvider<bool>((ref) => false);
 
+// 「じかん」ボタンの時間の管理
+final selectedDateTimeProvider = StateProvider<DateTime>(
+  (ref) => DateTime.now()
+);
+
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
+
+
+  Future<void> _selectDateTime(BuildContext context, WidgetRef ref) async {
+    DateTime selectedDateTime = ref.watch(selectedDateTimeProvider);
+
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: selectedDateTime,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (pickedDate != null && pickedDate != selectedDateTime) {
+      TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(selectedDateTime),
+        initialEntryMode: TimePickerEntryMode.input
+      );
+
+      if (pickedTime != null) {
+        selectedDateTime = DateTime(
+          pickedDate.year,
+          pickedDate.month,
+          pickedDate.day,
+          pickedTime.hour,
+          pickedTime.minute,
+        );
+      }
+    }
+  }
+
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -56,7 +92,9 @@ class HomePage extends ConsumerWidget {
                   width: 200,
                   height: 70,
                   onPressed: () {
-                    // 画面遷移
+                    // _selectTime(context, ref);
+                    // _selectDate(context, ref);
+                    _selectDateTime(context, ref);
                   },
                 ),
                 TextButton(
