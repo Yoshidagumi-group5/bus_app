@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bus_app/pages/SearchResult.dart';
+
 final transColorProvider = StateProvider<bool>((ref) => false);
+
 final futsuColorProvider = StateProvider<bool>((ref) => false);
 
 class HomePage extends ConsumerWidget {

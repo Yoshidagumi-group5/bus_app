@@ -1,9 +1,10 @@
 import 'package:bus_app/pages/example.dart';
-import 'package:bus_app/pages/example2.dart';
 import 'package:bus_app/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'pages/SearchResult.dart';
+
+import 'pages/example2.dart';
+import 'pages/okica.dart';
 
 Future<void> main() async {
   runApp(const ProviderScope(child: MyApp()));
@@ -31,7 +32,7 @@ enum PageType {
   homePage,
   example1,
   example2,
-  SearchResult,
+  okica,
 }
 
 class BottomNavigationNotifier extends Notifier<PageType> {
@@ -66,9 +67,10 @@ class MainPage extends ConsumerWidget {
         break;
       case PageType.example2:
         bodyWidget = const ExamplePage2();
+        break;
 
-      case PageType.SearchResult:
-        bodyWidget = const SearchResult();
+      case PageType.okica:
+        bodyWidget = const Okica();
         break;
     }
 
@@ -93,8 +95,8 @@ class MainPage extends ConsumerWidget {
             label: 'Example2',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'SearchResult',
+            icon: Icon(Icons.expand_circle_down),
+            label: 'okica',
           ),
         ],
         onTap: (index) {
