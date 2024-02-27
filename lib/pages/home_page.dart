@@ -1,6 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+// マップ(のるところ/おりるところ)(仮)
+class TestMap extends ConsumerWidget {
+  const TestMap({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context, '沖縄高専入口');
+          },
+          child: Text('ホームに戻る'),
+        ),
+      ),
+    );
+  }
+}
+
+
 // 「乗換あり」ボタンと「普通を外す」ボタンの状態管理
 final transColorProvider = StateProvider<bool>((ref) => false);
 final futsuColorProvider = StateProvider<bool>((ref) => false);
@@ -127,7 +147,7 @@ class HomePage extends ConsumerWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       // 「のるところ」と「おりるところ」の入れ替え
-                      if (leaveBusstop != 'のるところ' || arriveBusstop != 'おりるところ') {
+                      if (!(leaveBusstop == 'のるところ' || arriveBusstop == 'おりるところ')) {
                         String tmp = leaveBusstop;
                         ref.read(leaveBusstopProvider.notifier).state = arriveBusstop;
                         ref.read(arriveBusstopProvider.notifier).state = tmp;
@@ -158,7 +178,7 @@ class HomePage extends ConsumerWidget {
                   textSize: 30,
                   width: 300,
                   height: 80,
-                  onPressed: () {
+                  onPressed: () async {
                     /** 
                      * マップ(のるところ/おりるところ)とくっつけたらコメント外す
                      * 
