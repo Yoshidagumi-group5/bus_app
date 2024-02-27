@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'pages/example2.dart';
 import 'pages/okica.dart';
+import 'pages/readOkica.dart';
 
 Future<void> main() async {
   runApp(const ProviderScope(child: MyApp()));
@@ -33,6 +34,7 @@ enum PageType {
   example1,
   example2,
   okica,
+  readOkica,
 }
 
 class BottomNavigationNotifier extends Notifier<PageType> {
@@ -72,11 +74,16 @@ class MainPage extends ConsumerWidget {
       case PageType.okica:
         bodyWidget = const Okica();
         break;
+
+      case PageType.readOkica:
+        bodyWidget = const ReadOkica();
+        break;
     }
 
     return Scaffold(
       body: bodyWidget,
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color.fromARGB(255, 116, 85, 85),
         unselectedItemColor: Colors.white,
         backgroundColor: Color(0xFFBD2B2A),
@@ -97,6 +104,10 @@ class MainPage extends ConsumerWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.expand_circle_down),
             label: 'okica',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.expand_circle_down),
+            label: 'readOkica',
           ),
         ],
         onTap: (index) {
