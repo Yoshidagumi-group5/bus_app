@@ -1,9 +1,7 @@
-import 'package:bus_app/pages/example.dart';
 import 'package:bus_app/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'pages/example2.dart';
 import 'pages/okica.dart';
 import 'pages/readOkica.dart';
 
@@ -31,8 +29,6 @@ class MyApp extends StatelessWidget {
 // page追加時にはここに追加
 enum PageType {
   homePage,
-  example1,
-  example2,
   okica,
   readOkica,
 }
@@ -64,13 +60,6 @@ class MainPage extends ConsumerWidget {
       case PageType.homePage:
         bodyWidget = const HomePage();
         break;
-      case PageType.example1:
-        bodyWidget = const ExamplePage1();
-        break;
-      case PageType.example2:
-        bodyWidget = const ExamplePage2();
-        break;
-
       case PageType.okica:
         bodyWidget = const Okica();
         break;
@@ -84,7 +73,7 @@ class MainPage extends ConsumerWidget {
       body: bodyWidget,
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color.fromARGB(255, 116, 85, 85),
+        selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white,
         backgroundColor: Color(0xFFBD2B2A),
         currentIndex: PageType.values.indexOf(currentPage),
@@ -92,14 +81,6 @@ class MainPage extends ConsumerWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.home, color: Colors.white),
             label: 'ホーム',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.expand, color: Colors.white),
-            label: 'Example',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.expand, color: Colors.white),
-            label: 'Example2',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.expand_circle_down),

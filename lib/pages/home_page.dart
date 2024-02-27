@@ -114,10 +114,10 @@ class HomePage extends ConsumerWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     /** feature/searchResultとマージしたときにコメント外す */
-                    // Navigator.push(
-                    // context,
-                    // MaterialPageRoute(builder: (context) => const SearchResult()),
-                    // );
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SearchResult()),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
