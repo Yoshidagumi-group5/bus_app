@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        scaffoldBackgroundColor: const Color.fromARGB(255, 255, 232, 174),
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
@@ -72,23 +73,23 @@ class MainPage extends ConsumerWidget {
     }
 
     return Scaffold(
-      //appBar: AppBar(
-      //  title: const Center(child: Text("Green House Application")),
-      //),
       body: bodyWidget,
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white,
+        backgroundColor: Color(0xFFBD2B2A),
         currentIndex: PageType.values.indexOf(currentPage),
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home, color: Colors.white),
             label: 'ホーム',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.expand),
+            icon: Icon(Icons.expand, color: Colors.white),
             label: 'Example',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.expand),
+            icon: Icon(Icons.expand, color: Colors.white),
             label: 'Example2',
           ),
           BottomNavigationBarItem(
