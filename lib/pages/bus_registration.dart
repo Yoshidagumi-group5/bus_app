@@ -5,6 +5,7 @@ import 'package:bus_app/pages/original_alarm.dart';
 
 // ここから追加
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:vibration/vibration.dart';
 // ここまで追加
 
 // SearchResult(仮)
@@ -204,7 +205,12 @@ class Route extends ConsumerWidget {
                     isSelected: option,
                     children: options,
                   ),
-                  optionWidget,
+                  ProviderScope(
+                    overrides: [
+
+                    ],
+                    child: optionWidget
+                  ),
                 ],
               ),
             ),
@@ -215,6 +221,20 @@ class Route extends ConsumerWidget {
   }
 }
 
+// class Alarm extends ConsumerStatefulWidget {
+//   const Alarm({super.key});
+
+//   @override
+//   ConsumerState<Alarm> createState() => _AlarmState();
+// }
+
+// class _AlarmState extends ConsumerState<Alarm> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Placeholder();
+//   }
+// }
+
 // バス到着アラーム
 final busArrivalAlarmProvider = StateProvider<bool>(
   (ref) => false,
@@ -224,21 +244,31 @@ final wakeUpAlarmProvider = StateProvider<bool>(
   (ref) => false,
 );
 
-
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
-
-
 // 各ルートのアラームウィジェット
-class Alarm extends ConsumerWidget {
+class Alarm extends ConsumerStatefulWidget {
   // バス停の情報を取得するための引数を追加する
-  Alarm({super.key, required this.text, required this.busStops});
+  const Alarm({super.key, required this.text, required this.busStops});
 
   final String text;
   final List<String> busStops;
 
+  @override
+  ConsumerState<Alarm> createState() => _AlarmState();
+}
+
+class _AlarmState extends ConsumerState<Alarm> {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin(); // 追加
+
+  @override
+  void initState() {
+    super.initState();
+
+    // ここから追加
+    _requestIOSPermission();
+    _initializePlatformSpecifics();
+    // ここまで追加
+  }
 
   // ここから追加
   void _requestIOSPermission() {
@@ -253,10 +283,64 @@ class Alarm extends ConsumerWidget {
   }
   // ここまで追加
 
+  // ここから追加
+  void _initializePlatformSpecifics() {
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('app_icon');
+
+    var initializationSettingsIOS = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: false,
+      onDidReceiveLocalNotification: (id, title, body, payload) async {
+        // your call back to the UI
+      },
+    );
+
+    var initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onDidReceiveNotificationResponse: (NotificationResponse res) {
+      debugPrint('payload:${res.payload}');
+    });
+  }
+
+  Future<void> _showNotification(String title, String body) async {
+    var androidChannelSpecifics = const AndroidNotificationDetails(
+      'CHANNEL_ID',
+      'CHANNEL_NAME',
+      channelDescription: "CHANNEL_DESCRIPTION",
+      importance: Importance.max,
+      priority: Priority.high,
+      playSound: false,
+      timeoutAfter: 5000,
+      styleInformation: DefaultStyleInformation(true, true),
+    );
+
+    var iosChannelSpecifics = const DarwinNotificationDetails();
+
+    var platformChannelSpecifics = NotificationDetails(
+        android: androidChannelSpecifics, iOS: iosChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.show(
+      0, // Notification ID
+      title, // Notification Title
+      body, // Notification Body, set as null to remove the body
+      platformChannelSpecifics,
+      payload: 'New Payload', // Notification Payload
+    );
+  } 
+  // ここまで追加
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    _requestIOSPermission();
-    final alarm = OriginalAlarm();
+  Widget build(BuildContext context) {
+
+
+    /** 実装するときは OriginalAlarm() を使う */
+    // final alarm = OriginalAlarm();
+    final alarm = TestAlarm();
+
 
     final arrivalAlarm = ref.watch(busArrivalAlarmProvider);
     final wakeUpAlarm = ref.watch(wakeUpAlarmProvider);
@@ -277,7 +361,13 @@ class Alarm extends ConsumerWidget {
                 if (value) {
                   await alarm.start(3);
                   if (context.mounted) {
-                    debugPrint('ダイアログ表示まえ');
+                    /** バックエンドからもらった値を入れる */
+                    _showNotification('バス到着まであと${5}です', 'バス停に向かいましょう');
+                    
+                    if (await Vibration.hasVibrator() ?? false) {
+                      Vibration.vibrate();
+                    }
+
                     showDialog(
                       context: context,
                       builder: (context) {
@@ -288,6 +378,7 @@ class Alarm extends ConsumerWidget {
                             ElevatedButton(
                               onPressed: () {
                                 alarm.stop();
+                                Vibration.cancel();
                                 Navigator.pop(context);
                               },
                               child: const Text('ストップ'),
@@ -296,6 +387,7 @@ class Alarm extends ConsumerWidget {
                         );
                       }
                     );
+
                   }
                 }
               },
@@ -362,7 +454,7 @@ class Alarm extends ConsumerWidget {
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: busStops.map((busStop) {
+                    children: widget.busStops.map((busStop) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
