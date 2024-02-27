@@ -39,6 +39,7 @@ dependencies:
   hooks_riverpod: ^2.4.9
   flutter_hooks: ^0.20.4
   flutter_local_notifications: ^16.3.2
+  flutter_ringtone_player: ^3.2.0
 
 dev_dependencies:
   flutter_test:
