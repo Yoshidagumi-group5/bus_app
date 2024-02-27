@@ -10,13 +10,18 @@ final selectedDateTimeProvider = StateProvider<DateTime>(
   (ref) => DateTime.now()
 );
 
+//「のるところ」「おりるところ」のテキストの管理
+final leaveBusstopProvider = StateProvider<String>(
+  (ref) => 'のるところ',
+);
+final arriveBusstopProvider = StateProvider<String>(
+  (ref) => 'おりるところ',
+);
+
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
-
-  Future<void> _selectDateTime(BuildContext context, WidgetRef ref) async {
-    DateTime selectedDateTime = ref.watch(selectedDateTimeProvider);
-
+  Future<DateTime> _selectDateTime(BuildContext context, DateTime selectedDateTime) async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: selectedDateTime,
@@ -41,11 +46,16 @@ class HomePage extends ConsumerWidget {
         );
       }
     }
-  }
 
+    return selectedDateTime;
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final String leaveBusstop = ref.watch(leaveBusstopProvider);
+    final String arriveBusstop = ref.watch(arriveBusstopProvider);
+    final DateTime selectedDateTime = ref.watch(selectedDateTimeProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Center(
@@ -91,26 +101,37 @@ class HomePage extends ConsumerWidget {
                   textSize: 30,
                   width: 200,
                   height: 70,
-                  onPressed: () {
-                    // _selectTime(context, ref);
-                    // _selectDate(context, ref);
-                    _selectDateTime(context, ref);
+                  onPressed: () async {
+                    ref.read(selectedDateTimeProvider.notifier).state = await _selectDateTime(context, selectedDateTime);
                   },
                 ),
                 TextButton(
-                  text: 'のるところ',
+                  text: leaveBusstop,
                   textSize: 30,
                   width: 300,
                   height: 80,
-                  onPressed: () {
-                    // 画面遷移
+                  onPressed: () async {
+                    /** マップ(のるところ/おりるところ)とくっつけたらコメント外す
+                     * 
+                     * 画面遷移先で以下を実行する
+                     *  Navigator.pop(context, "バス停の名前");
+                     */
+                    // ref.read(leaveBusstopProvider.notifier).state = await Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => TestMap()),
+                    // );
                   },
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
                     onPressed: () {
-                      //
+                      // 「のるところ」と「おりるところ」の入れ替え
+                      if (leaveBusstop != 'のるところ' || arriveBusstop != 'おりるところ') {
+                        String tmp = leaveBusstop;
+                        ref.read(leaveBusstopProvider.notifier).state = arriveBusstop;
+                        ref.read(arriveBusstopProvider.notifier).state = tmp;
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.black,
@@ -133,22 +154,33 @@ class HomePage extends ConsumerWidget {
                   ),
                 ),
                 TextButton(
-                  text: 'おりるところ',
+                  text: arriveBusstop,
                   textSize: 30,
                   width: 300,
                   height: 80,
                   onPressed: () {
-                    // 画面遷移
+                    /** 
+                     * マップ(のるところ/おりるところ)とくっつけたらコメント外す
+                     * 
+                     * 画面遷移先で以下を実行する
+                     *  Navigator.pop(context, "バス停の名前");
+                     */
+                    // ref.read(arriveBusstopProvider.notifier).state = await Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => TestMap()),
+                    // );
                   },
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
                     onPressed: () {
-                      /** feature/searchResultとマージしたときにコメント外す */
+                      /** 
+                       * feature/searchResultとマージしたときにコメント外す
+                       */
                       // Navigator.push(
-                      // context,
-                      // MaterialPageRoute(builder: (context) => const SearchResult()),
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => const SearchResult(selectedDateTime, leaveBusstop, arriveBusstop)),
                       // );
                     },
                     style: ElevatedButton.styleFrom(
@@ -242,36 +274,40 @@ class CheckButton extends ConsumerWidget {
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: ElevatedButton(
-        onPressed: () {
-          ref.read(provider.notifier).state = !color;
-        },
-        style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.black,
-            backgroundColor: color ? const Color(0xFFBD2B2A) : Colors.white,
-            side: const BorderSide(color: Color(0xFFE2A5A4), width: 2),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+      child: Consumer(
+        builder: (context, WidgetRef ref, child) {
+          return ElevatedButton(
+            onPressed: () {
+              ref.read(provider.notifier).state = !color;
+            },
+            style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.black,
+                backgroundColor: color ? const Color(0xFFBD2B2A) : Colors.white,
+                side: const BorderSide(color: Color(0xFFE2A5A4), width: 2),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                fixedSize: const Size(150, 80)),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  iconData,
+                  size: 40,
+                  color: color ? Colors.white : const Color(0xFFBD2B2A),
+                ),
+                Text(
+                  text,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: color ? Colors.white : const Color(0xFFBD2B2A),
+                  ),
+                ),
+              ],
             ),
-            fixedSize: const Size(150, 80)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              iconData,
-              size: 40,
-              color: color ? Colors.white : const Color(0xFFBD2B2A),
-            ),
-            Text(
-              text,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
-                color: color ? Colors.white : const Color(0xFFBD2B2A),
-              ),
-            ),
-          ],
-        ),
+          );
+        }
       ),
     );
   }
