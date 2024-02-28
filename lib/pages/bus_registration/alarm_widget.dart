@@ -3,6 +3,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vibration/vibration.dart';
+import 'package:flutter/services.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'dart:async';
@@ -202,11 +203,15 @@ class _AlarmState extends ConsumerState<Alarm> {
                       /** バックエンドからもらった値を入れる */
                       _scheduleNotification(0, 'バス到着まであと${5}分です', 'バス停に向かいましょう');
                       
-                      Vibration.vibrate();
+                      setState(() {
+                        HapticFeedback.mediumImpact();
+                      });
+
+                      // Vibration.vibrate();
                       // if (await Vibration.hasVibrator() ?? false) {
                       //   Vibration.vibrate();
                       // }
-                      
+
                       // if (context.mounted) {
                       //   showDialog(
                       //     context: context,
