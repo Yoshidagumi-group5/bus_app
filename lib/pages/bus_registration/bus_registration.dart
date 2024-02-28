@@ -48,6 +48,10 @@ final routeWidgetProvider = StateProvider<Widget>(
   (ref) => Route(routeNo: 'ルート${1}', busStops: routes[0], busStopAlarmProvider: busStopAlarmProviders[0]),
 );
 
+// final routeWidgetProvider = StateProvider<Widget>(
+//   (ref) => const NoRoute(),
+// );
+
 
 const List<Widget> options = <Widget>[
   Text('アラーム', style: TextStyle(fontSize: 16)),
@@ -73,7 +77,8 @@ class BusRegistration extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
 
     final List<Widget> routeWidgets = <Widget>[
-      for (int i = 0; i < routes.length; i++) Route(routeNo: 'ルート${i + 1}', busStops: routes[i], busStopAlarmProvider: busStopAlarmProviders[i])
+      const NoRoute(),
+      for (int i = 1; i < routes.length; i++) Route(routeNo: 'ルート${i}', busStops: routes[i - 1], busStopAlarmProvider: busStopAlarmProviders[i - 1])
     ];    
 
     final route = ref.watch(routeToggleProvider);
@@ -98,6 +103,8 @@ class BusRegistration extends ConsumerWidget {
           Positioned.fill(
             child: Image.asset('assets/images/shisa_touka_trimming.png', fit: BoxFit.cover),
           ),
+          // routeWidget == const NoRoute()
+          // ? const NoRoute()
           SingleChildScrollView(
             child: Container(
               child: Column(
@@ -144,6 +151,20 @@ class BusRegistration extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class NoRoute extends ConsumerWidget {
+  const NoRoute({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: Color(0xFFFFF4D9),
+        borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
     );
   }

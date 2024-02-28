@@ -119,7 +119,7 @@ class _AlarmState extends ConsumerState<Alarm> {
     // 5秒後
     var scheduleNotificationDateTime = DateTime.now().add(Duration(seconds: 5));
 
-    var androidChannelSpecifics = AndroidNotificationDetails(
+    var androidChannelSpecifics = const AndroidNotificationDetails(
       'CHANNEL_ID 1',
       'CHANNEL_NAME 1',
       channelDescription: "CHANNEL_DESCRIPTION 1",
@@ -133,7 +133,7 @@ class _AlarmState extends ConsumerState<Alarm> {
       ledOffMs: 500,
       importance: Importance.max,
       priority: Priority.high,
-      playSound: false,
+      playSound: true,
       timeoutAfter: 5000,
       styleInformation: DefaultStyleInformation(true, true),
     );
@@ -201,10 +201,12 @@ class _AlarmState extends ConsumerState<Alarm> {
                       // await alarm.start(3);
                       /** バックエンドからもらった値を入れる */
                       _scheduleNotification(0, 'バス到着まであと${5}分です', 'バス停に向かいましょう');
-
-                      if (await Vibration.hasVibrator() ?? false) {
-                        Vibration.vibrate();
-                      }
+                      
+                      Vibration.vibrate();
+                      // if (await Vibration.hasVibrator() ?? false) {
+                      //   Vibration.vibrate();
+                      // }
+                      
                       // if (context.mounted) {
                       //   showDialog(
                       //     context: context,
