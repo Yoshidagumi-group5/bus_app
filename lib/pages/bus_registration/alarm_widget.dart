@@ -9,44 +9,168 @@ import 'package:timezone/timezone.dart' as tz;
 import 'dart:async';
 
 // バス到着アラーム
-final busArrivalAlarmProvider = StateProvider<bool>(
-  (ref) => false,
-);
+// final busArrivalAlarmProvider = StateProvider<bool>(
+//   (ref) => false,
+// );
 // 寝落ち防止アラーム
-final wakeUpAlarmProvider = StateProvider<bool>(
-  (ref) => false,
-);
+// final wakeUpAlarmProvider = StateProvider<bool>(
+//   (ref) => false,
+// );
 
 // 寝落ち防止アラームのon/offのウィジェット
 final wakeUpAlarmWidgetProvider = StateProvider<Widget>(
   (ref) => WakeUpAlarmOff(),
 );
 
+
+// ローカル通知するためのインスタンス化
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin(); // 追加
+
+// iOSでの通知の許可
+void requestIOSPermission() {
+  flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin>()
+      ?.requestPermissions(
+        alert: false,
+        badge: true,
+        sound: false,
+      );
+}
+
+// macOS(Darwin プラットフォーム)用の通知の初期化
+void initializePlatformSpecifics() {
+  var initializationSettingsAndroid =
+      const AndroidInitializationSettings('app_icon');
+
+  var initializationSettingsIOS = DarwinInitializationSettings(
+    requestAlertPermission: true,
+    requestBadgePermission: true,
+    requestSoundPermission: false,
+    onDidReceiveLocalNotification: (id, title, body, payload) async {
+      // your call back to the UI
+    },
+  );
+
+  var initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+
+  flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse res) {
+    debugPrint('payload:${res.payload}');
+  });
+}
+
+// 通知を表示させる
+Future<void> showNotification(int id, String title, String body) async {
+  var androidChannelSpecifics = const AndroidNotificationDetails(
+    'CHANNEL_ID',
+    'CHANNEL_NAME',
+    channelDescription: "CHANNEL_DESCRIPTION",
+    importance: Importance.max,
+    priority: Priority.high,
+    playSound: false,
+    timeoutAfter: 5000,
+    styleInformation: DefaultStyleInformation(true, true),
+  );
+
+  var iosChannelSpecifics = DarwinNotificationDetails();
+
+  var platformChannelSpecifics = NotificationDetails(
+      android: androidChannelSpecifics, iOS: iosChannelSpecifics);
+
+  await flutterLocalNotificationsPlugin.show(
+    id, // Notification ID
+    title, // Notification Title
+    body, // Notification Body, set as null to remove the body
+    platformChannelSpecifics,
+    payload: 'New Payload', // Notification Payload
+  );
+}
+
+Future<void> cancelNotification(id) async {
+  await flutterLocalNotificationsPlugin.cancel(id);
+}
+
+Future<void> scheduleNotification({id, title, body, hours, minutes, seconds}) async {
+  // 5秒後
+  /** 実際に使う時は引数の「seconds」を消す */
+  var scheduleNotificationDateTime = 
+      DateTime.now().add(Duration(hours: hours, minutes: minutes, seconds: seconds));
+
+  var androidChannelSpecifics = const AndroidNotificationDetails(
+    'CHANNEL_ID 1',
+    'CHANNEL_NAME 1',
+    channelDescription: "CHANNEL_DESCRIPTION 1",
+    icon: 'app_icon',
+    //sound: RawResourceAndroidNotificationSound('my_sound'),
+    largeIcon: DrawableResourceAndroidBitmap('app_icon'),
+    enableLights: true,
+    color: Color.fromARGB(255, 255, 0, 0),
+    ledColor: Color.fromARGB(255, 255, 0, 0),
+    ledOnMs: 1000,
+    ledOffMs: 500,
+    importance: Importance.max,
+    priority: Priority.high,
+    playSound: true,
+    timeoutAfter: 5000,
+    styleInformation: DefaultStyleInformation(true, true),
+  );
+
+  var iosChannelSpecifics = DarwinNotificationDetails(
+    //sound: 'my_sound.aiff',
+  );
+
+  var platformChannelSpecifics = NotificationDetails(
+    android: androidChannelSpecifics,
+    iOS: iosChannelSpecifics,
+  );
+
+  await flutterLocalNotificationsPlugin.zonedSchedule(
+    id,
+    title,
+    body,
+    tz.TZDateTime.from(scheduleNotificationDateTime, tz.local),// 5秒後に表示
+    platformChannelSpecifics,
+    payload: 'Test Payload',
+    androidAllowWhileIdle: true,
+    uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+  );
+}
+
+
 // 各ルートのアラームウィジェット
 class Alarm extends ConsumerStatefulWidget {
   // バス停の情報を取得するための引数を追加する
-  const Alarm({super.key, required this.busStops, required this.busStopAlarmProvider});
+  const Alarm({
+    super.key,
+    required this.busStops,
+    required this.busStopAlarmProvider,
+    required this.busArrivalAlarmProvider,
+    required this.wakeUpAlarmProvider
+  });
 
   // final String text;
   final List<String> busStops;
   final List<StateProvider<bool>> busStopAlarmProvider;
+  final StateProvider<bool> busArrivalAlarmProvider;
+  final StateProvider<bool> wakeUpAlarmProvider;
 
   @override
   ConsumerState<Alarm> createState() => _AlarmState();
 }
 
 class _AlarmState extends ConsumerState<Alarm> {
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin(); // 追加
 
   @override
   void initState() {
     super.initState();
 
-    _requestIOSPermission();  // iOSでの通知の許可
-    _initializePlatformSpecifics(); // macOS(Darwin プラットフォーム)用の通知の初期化
-    // _showNotification();
-    // _scheduleNotification();
+    requestIOSPermission();  // iOSでの通知の許可
+    initializePlatformSpecifics(); // macOS(Darwin プラットフォーム)用の通知の初期化
+    // showNotification();
+    // scheduleNotification();
 
     // タイムゾーンデータベースの初期化
     tz.initializeTimeZones();
@@ -54,123 +178,20 @@ class _AlarmState extends ConsumerState<Alarm> {
     tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
   }
 
-  // iOSでの通知の許可
-  void _requestIOSPermission() {
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-          alert: false,
-          badge: true,
-          sound: false,
-        );
-  }
-
-  // macOS(Darwin プラットフォーム)用の通知の初期化
-  void _initializePlatformSpecifics() {
-    var initializationSettingsAndroid =
-        const AndroidInitializationSettings('app_icon');
-
-    var initializationSettingsIOS = DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: false,
-      onDidReceiveLocalNotification: (id, title, body, payload) async {
-        // your call back to the UI
-      },
-    );
-
-    var initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-
-    flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse: (NotificationResponse res) {
-      debugPrint('payload:${res.payload}');
-    });
-  }
-
-  // 通知を表示させる
-  Future<void> _showNotification(int id, String title, String body) async {
-    var androidChannelSpecifics = const AndroidNotificationDetails(
-      'CHANNEL_ID',
-      'CHANNEL_NAME',
-      channelDescription: "CHANNEL_DESCRIPTION",
-      importance: Importance.max,
-      priority: Priority.high,
-      playSound: false,
-      timeoutAfter: 5000,
-      styleInformation: DefaultStyleInformation(true, true),
-    );
-
-    var iosChannelSpecifics = DarwinNotificationDetails();
-
-    var platformChannelSpecifics = NotificationDetails(
-        android: androidChannelSpecifics, iOS: iosChannelSpecifics);
-
-    await flutterLocalNotificationsPlugin.show(
-      id, // Notification ID
-      title, // Notification Title
-      body, // Notification Body, set as null to remove the body
-      platformChannelSpecifics,
-      payload: 'New Payload', // Notification Payload
-    );
-  }
-
-  Future<void> _scheduleNotification(int id, String title, String body) async {
-    // 5秒後
-    var scheduleNotificationDateTime = DateTime.now().add(Duration(seconds: 5));
-
-    var androidChannelSpecifics = const AndroidNotificationDetails(
-      'CHANNEL_ID 1',
-      'CHANNEL_NAME 1',
-      channelDescription: "CHANNEL_DESCRIPTION 1",
-      icon: 'app_icon',
-      //sound: RawResourceAndroidNotificationSound('my_sound'),
-      largeIcon: DrawableResourceAndroidBitmap('app_icon'),
-      enableLights: true,
-      color: const Color.fromARGB(255, 255, 0, 0),
-      ledColor: const Color.fromARGB(255, 255, 0, 0),
-      ledOnMs: 1000,
-      ledOffMs: 500,
-      importance: Importance.max,
-      priority: Priority.high,
-      playSound: true,
-      timeoutAfter: 5000,
-      styleInformation: DefaultStyleInformation(true, true),
-    );
-
-    var iosChannelSpecifics = DarwinNotificationDetails(
-      //sound: 'my_sound.aiff',
-    );
-
-    var platformChannelSpecifics = NotificationDetails(
-      android: androidChannelSpecifics,
-      iOS: iosChannelSpecifics,
-    );
-
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      id,
-      title,
-      body,
-      tz.TZDateTime.from(scheduleNotificationDateTime, tz.local),// 5秒後に表示
-      platformChannelSpecifics,
-      payload: 'Test Payload',
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-
 
     /** 実装するときは OriginalAlarm() を使う */
     // final alarm = OriginalAlarm();
     final alarm = TestAlarm();
 
-    final bool arrivalAlarm = ref.watch(busArrivalAlarmProvider);
-    final bool wakeUpAlarm = ref.watch(wakeUpAlarmProvider);
-    final wakeUpAlarmWidget = ref.watch(wakeUpAlarmWidgetProvider);
+    final bool arrivalAlarm = ref.watch(widget.busArrivalAlarmProvider);
+    final bool wakeUpAlarm = ref.watch(widget.wakeUpAlarmProvider);
+    final Widget wakeUpAlarmWidget = ref.watch(wakeUpAlarmWidgetProvider);
+    final List<bool> busStopAlarms = <bool>[
+      for (int i = 0; i < widget.busStopAlarmProvider.length; i++) ref.watch(widget.busStopAlarmProvider[i])
+    ];
+
 
     // 寝落ち防止アラームのon/offのウィジェット
     final wakeUpAlarmWidgets = [
@@ -197,16 +218,24 @@ class _AlarmState extends ConsumerState<Alarm> {
                   activeTrackColor: Color(0xFFBD2B2A),
                   value: arrivalAlarm,
                   onChanged: (bool value) async {
-                    ref.read(busArrivalAlarmProvider.notifier).state = value;
+                    ref.read(widget.busArrivalAlarmProvider.notifier).state = value;
                     if (value) {
                       // await alarm.start(3);
                       /** バックエンドからもらった値を入れる */
-                      _scheduleNotification(0, 'バス到着まであと${5}分です', 'バス停に向かいましょう');
+                      scheduleNotification(
+                        id: 0,
+                        title :'バス到着まであと${5}分です',
+                        body: 'バス停に向かいましょう',
+                        hours: 0,
+                        minutes: 0,
+                        seconds: 5,
+                      );
                       
                       setState(() {
-                        HapticFeedback.mediumImpact();
+                        HapticFeedback.mediumImpact();  // バイブレーション
                       });
 
+                      /** バイブレーションのもう一つのパターン */
                       // Vibration.vibrate();
                       // if (await Vibration.hasVibrator() ?? false) {
                       //   Vibration.vibrate();
@@ -233,6 +262,9 @@ class _AlarmState extends ConsumerState<Alarm> {
                       //     }
                       //   );
                       // }
+                    }
+                    else {
+                      cancelNotification(0);
                     }
                   },
                 );
@@ -280,10 +312,32 @@ class _AlarmState extends ConsumerState<Alarm> {
               style: TextStyle(fontSize: 25),
             ),
             Switch(
+              activeColor: Colors.white,
+              activeTrackColor: const Color(0xFFBD2B2A),
               value: wakeUpAlarm,
               onChanged: (value) {
-                ref.read(wakeUpAlarmProvider.notifier).state = value;
+                ref.read(widget.wakeUpAlarmProvider.notifier).state = value;
                 ref.read(wakeUpAlarmWidgetProvider.notifier).state = wakeUpAlarmWidgets[value ? 1 : 0];
+            
+                if (value) {
+                  for (int i = 0; i < widget.busStops.length; i++) {
+                    if (busStopAlarms[i]) {
+                      scheduleNotification(
+                        id: i + 1,
+                        title: 'title${i + 1}',
+                        body: 'body${i + 1}',
+                        hours: 0,
+                        minutes: 0,
+                        seconds: i + 1,
+                      );
+                    }
+                  }
+                }
+                else {
+                  for (int i = 1; i < widget.busStops.length; i++) {
+                    cancelNotification(i);
+                  }
+                }
               },
             ),
           ],
@@ -294,7 +348,26 @@ class _AlarmState extends ConsumerState<Alarm> {
   }
 }
 
-class WakeUpAlarmOn extends ConsumerWidget {
+class WakeUpAlarmOff extends ConsumerWidget {
+  const WakeUpAlarmOff({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      decoration: const BoxDecoration(
+        color: Color(0xFFFFF4D9),
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
+      width: 360,
+      child: const Center(
+        child: Text('寝落ち防止アラームはオフです', style: TextStyle(fontSize: 20))
+      ),
+    );
+  }
+}
+
+class WakeUpAlarmOn extends ConsumerStatefulWidget {
   const WakeUpAlarmOn({
     super.key,
     required this.busStops,
@@ -305,9 +378,14 @@ class WakeUpAlarmOn extends ConsumerWidget {
   final List<StateProvider<bool>> busStopAlarmProvider;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<WakeUpAlarmOn> createState() => _WakeUpAlarmOnState();
+}
+
+class _WakeUpAlarmOnState extends ConsumerState<WakeUpAlarmOn> {
+  @override
+  Widget build(BuildContext context) {
     final List<bool> busStopAlarms = <bool>[
-      for (int i = 0; i < busStopAlarmProvider.length; i++) ref.watch(busStopAlarmProvider[i])
+      for (int i = 0; i < widget.busStopAlarmProvider.length; i++) ref.watch(widget.busStopAlarmProvider[i])
     ];
 
     return Container(
@@ -324,24 +402,43 @@ class WakeUpAlarmOn extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  for (int i = 0; i < busStops.length - 1; i++) ... {
+                  for (int i = 0; i < widget.busStops.length - 1; i++) ... {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            Switch(
-                              value: busStopAlarms[i],
-                              onChanged: (value) {
-                                ref.read(busStopAlarmProvider[i].notifier).state = value;
+                            Consumer(
+                              builder: (context, ref, child) {
+                                return Switch(
+                                  activeColor: Colors.white,
+                                  activeTrackColor: Color(0xFFBD2B2A),
+                                  value: busStopAlarms[i],
+                                  onChanged: (value) {
+                                    ref.read(widget.busStopAlarmProvider[i].notifier).state = value;
 
-                                if (value) {
-                                  // _scheduleNotification(i, 'title', 'body');
-                                }
+                                    debugPrint('${i + 1}秒');
 
-                              },
+                                    setState(() {
+                                      if (value) {
+                                        scheduleNotification(
+                                          id: i + 1,
+                                          title: 'title${i + 1}',
+                                          body: 'body${i + 1}',
+                                          hours: 0,
+                                          minutes: 0,
+                                          seconds: i + 1,
+                                        );
+                                      }
+                                      else {
+                                        cancelNotification(i + 1);
+                                      }
+                                    });
+                                  },
+                                );
+                              }
                             ),
-                            Text(busStops[i], style: const TextStyle(fontSize: 20)),
+                            Text(widget.busStops[i], style: const TextStyle(fontSize: 20)),
                           ],
                         ),
                         const Padding(
@@ -356,14 +453,16 @@ class WakeUpAlarmOn extends ConsumerWidget {
                       Consumer(
                         builder: (context, ref, child) {
                           return Switch(
+                            activeColor: Colors.white,
+                            activeTrackColor: Color(0xFFBD2B2A),
                             value: busStopAlarms[busStopAlarms.length - 1],
                             onChanged: (value) {
-                              ref.read(busStopAlarmProvider[busStops.length - 1].notifier).state = value;
+                              ref.read(widget.busStopAlarmProvider[widget.busStops.length - 1].notifier).state = value;
                             },
                           );
                         }
                       ),
-                      Text(busStops[busStops.length - 1], style: const TextStyle(fontSize: 20)),
+                      Text(widget.busStops[widget.busStops.length - 1], style: const TextStyle(fontSize: 20)),
                     ],
                   ),
                 ]
@@ -371,25 +470,6 @@ class WakeUpAlarmOn extends ConsumerWidget {
             ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-class WakeUpAlarmOff extends ConsumerWidget {
-  const WakeUpAlarmOff({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      padding: EdgeInsets.all(8.0),
-      decoration: const BoxDecoration(
-        color: Color(0xFFFFF4D9),
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-      ),
-      width: 360,
-      child: Center(
-        child: Text('寝落ち防止アラームはオフです', style: TextStyle(fontSize: 20))
       ),
     );
   }
