@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'pages/SearchResult.dart';
 
 Future<void> main() async {
+  await Prefs.init();
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -63,7 +64,7 @@ class MainPage extends ConsumerWidget {
         break;
 
       case PageType.SearchResult:
-        bodyWidget = const SearchResult();
+        bodyWidget = SearchResult();
         break;
     }
 

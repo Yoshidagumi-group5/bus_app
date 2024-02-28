@@ -27,11 +27,89 @@ final List<StateProvider<bool>> colorProviders = <StateProvider<bool>>[
   return result;
 });*/
 
-class SearchResult extends ConsumerWidget {
-  const SearchResult({super.key});
+class Prefs {
+  static SharedPreferences? _prefs;
+
+  static Future<SharedPreferences?> init() async {
+    _prefs = await SharedPreferences.getInstance();
+    return _prefs;
+  }
+
+  static Future<bool> setBool(String key, bool value) async {
+    if (_prefs == null) return false;
+    return await _prefs!.setBool(key, value);
+  }
+
+  static Future<bool> setDouble(String key, double value) async {
+    if (_prefs == null) return false;
+    return await _prefs!.setDouble(key, value);
+  }
+
+  static Future<bool> setInt(String key, int value) async {
+    if (_prefs == null) return false;
+    return await _prefs!.setInt(key, value);
+  }
+
+  static Future<bool> setString(String key, String value) async {
+    if (_prefs == null) return false;
+    return await _prefs!.setString(key, value);
+  }
+
+  static Future<bool> setStringList(String key, List<String> value) async {
+    if (_prefs == null) return false;
+    return await _prefs!.setStringList(key, value);
+  }
+
+  static bool? getBool(String key) => _prefs?.getBool(key);
+
+  static double? getDouble(String key) => _prefs?.getDouble(key);
+
+  static int? getInt(String key) => _prefs?.getInt(key);
+
+  static String? getString(String key) => _prefs?.getString(key);
+
+  static List<String>? getStringList(String key) => _prefs?.getStringList(key);
+
+  static Set<String>? getKeys() => _prefs?.getKeys();
+
+  static Future<bool> remove(String key) async {
+    if (_prefs == null) return false;
+    return await _prefs!.remove(key);
+  }
+
+  static Future<bool> clear() async {
+    if (_prefs == null) return false;
+    return await _prefs!.clear();
+  }
+}
+
+class SearchResult extends StatefulWidget {
+  SearchResult({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _SearchResultState createState() => _SearchResultState();
+}
+
+class _SearchResultState extends State<SearchResult> {
+  int resultNumCounter = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    setState() {
+      resultNumCounter += searchResult.length;
+    }
+
+    Prefs.setInt("currentResultNum", resultNumCounter);
+  }
+
+  void showSharedPreference() {
+    final keys = Prefs.getKeys();
+    print(keys);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFFE8AE),
       appBar: AppBar(
@@ -68,7 +146,7 @@ class SearchResult extends ConsumerWidget {
                             border: Border.all(color: const Color(0xFFE2A5A4)),
                             borderRadius: BorderRadius.circular(10),
                             color: Colors.white),
-                        child: const Padding(
+                        child: Padding(
                           padding: EdgeInsets.all(8.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -88,6 +166,9 @@ class SearchResult extends ConsumerWidget {
                                         fontSize: 17,
                                         fontWeight: FontWeight.bold),
                                   ),
+                                  ElevatedButton(
+                                      onPressed: () => showSharedPreference(),
+                                      child: Text("テスト"))
                                 ],
                               ),
                             ],
@@ -237,6 +318,12 @@ class SearchResult extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    throw UnimplementedError();
   }
 }
 
@@ -407,9 +494,10 @@ class BusRegisterationButton extends ConsumerWidget {
         child: IconButton(
           onPressed: () async {
             ref.read(providers.notifier).state = !color;
-            SharedPreferences prefs = await SharedPreferences.getInstance();
             if (ref.read(providers.notifier).state == !color) {
-              prefs.setStringList("two", searchResult[num]);
+              await Prefs.setStringList(
+                  ((num + Prefs.getInt("currentResultNum")!).toString()),
+                  searchResult[num]);
               print(ref.read(providers.notifier).state ? "登録" : "解除");
             }
           },
