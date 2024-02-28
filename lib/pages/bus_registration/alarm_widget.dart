@@ -115,7 +115,7 @@ class _AlarmState extends ConsumerState<Alarm> {
     );
   }
 
-  Future<void> _scheduleNotification() async {
+  Future<void> _scheduleNotification(int id, String title, String body) async {
     // 5秒後
     var scheduleNotificationDateTime = DateTime.now().add(Duration(seconds: 5));
 
@@ -148,9 +148,9 @@ class _AlarmState extends ConsumerState<Alarm> {
     );
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      0,
-      'Test Title',
-      'Test Body',
+      id,
+      title,
+      body,
       tz.TZDateTime.from(scheduleNotificationDateTime, tz.local),// 5秒後に表示
       platformChannelSpecifics,
       payload: 'Test Payload',
@@ -200,36 +200,32 @@ class _AlarmState extends ConsumerState<Alarm> {
                     if (value) {
                       // await alarm.start(3);
                       /** バックエンドからもらった値を入れる */
-                      // _showNotification(0, 'バス到着まであと${5}分です', 'バス停に向かいましょう');
-                      _scheduleNotification();
+                      _scheduleNotification(0, 'バス到着まであと${5}分です', 'バス停に向かいましょう');
 
-                      if (context.mounted) {
-                        
-                        // if (await Vibration.hasVibrator() ?? false) {
-                        //   Vibration.vibrate();
-                        // }
-                
-                        // showDialog(
-                        //   context: context,
-                        //   builder: (context) {
-                        //     return AlertDialog(
-                        //       title: const Text("あと${5}分"),
-                        //       content: const Text("バス到着まであと${5}分です"),
-                        //       actions: [
-                        //         ElevatedButton(
-                        //           onPressed: () {
-                        //             alarm.stop();
-                        //             Vibration.cancel();
-                        //             Navigator.pop(context);
-                        //           },
-                        //           child: const Text('ストップ'),
-                        //         ),
-                        //       ],
-                        //     );
-                        //   }
-                        // );
-                
+                      if (await Vibration.hasVibrator() ?? false) {
+                        Vibration.vibrate();
                       }
+                      // if (context.mounted) {
+                      //   showDialog(
+                      //     context: context,
+                      //     builder: (context) {
+                      //       return AlertDialog(
+                      //         title: const Text("あと${5}分"),
+                      //         content: const Text("バス到着まであと${5}分です"),
+                      //         actions: [
+                      //           ElevatedButton(
+                      //             onPressed: () {
+                      //               alarm.stop();
+                      //               Vibration.cancel();
+                      //               Navigator.pop(context);
+                      //             },
+                      //             child: const Text('ストップ'),
+                      //           ),
+                      //         ],
+                      //       );
+                      //     }
+                      //   );
+                      // }
                     }
                   },
                 );
@@ -422,90 +418,3 @@ class TestAlarm {
     FlutterRingtonePlayer.stop();
   }
 }
-
-// import 'dart:async';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-// void main() {
-//   runApp(MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: MyHomePage(),
-//     );
-//   }
-// }
-
-// class MyHomePage extends StatefulWidget {
-//   @override
-//   _MyHomePageState createState() => _MyHomePageState();
-// }
-
-// class _MyHomePageState extends State<MyHomePage> {
-//   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-//       FlutterLocalNotificationsPlugin();
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     // タイムゾーンデータベースの初期化
-//     tz.initializeTimeZones();
-//     // ローカルロケーションのタイムゾーンを東京に設定
-//     tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
-//     var initializationSettingsAndroid =
-//         AndroidInitializationSettings('@mipmap/ic_launcher');
-//     // var initializationSettingsIOS = IOSInitializationSettings();
-//     var initializationSettings = InitializationSettings(
-//         android: initializationSettingsAndroid);
-//     flutterLocalNotificationsPlugin.initialize(initializationSettings);
-//   }
-
-//   Future onSelectNotification(String payload) async {
-//     // 通知がタップされた時の処理
-//     debugPrint("Notification tapped with payload: $payload");
-//   }
-
-//   Future _scheduleNotification() async {
-//     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-//       'your_channel_id',
-//       'your_channel_name',
-//       channelDescription: 'your_channel_description',
-//       importance: Importance.max,
-//       priority: Priority.high,
-//     );
-//     // var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-//     var platformChannelSpecifics = NotificationDetails(
-//         android: androidPlatformChannelSpecifics);
-
-//     await flutterLocalNotificationsPlugin.zonedSchedule(
-//       0, // 通知のID
-//       '通知タイトル',
-//       '通知メッセージ',
-//       tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)), // 5秒後に通知
-//       platformChannelSpecifics,
-//       androidAllowWhileIdle: true,
-//       uiLocalNotificationDateInterpretation:
-//           UILocalNotificationDateInterpretation.absoluteTime,
-//       matchDateTimeComponents: DateTimeComponents.time,
-//     );
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Flutter Notification Example'),
-//       ),
-//       body: Center(
-//         child: ElevatedButton(
-//           onPressed: _scheduleNotification,
-//           child: Text('5秒後に通知'),
-//         ),
-//       ),
-//     );
-//   }
-// }
