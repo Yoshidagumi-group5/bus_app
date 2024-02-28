@@ -1,14 +1,17 @@
 // import 'dart:html';
 // import 'dart:math';
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-List<String> searchResult = [
-  "a",
-  "b",
-  "c",
-  "d",
+List<List<String>> searchResult = [
+  ['77', '500', '30', '14:30', '15:30', '沖縄高専入口', '那覇バスターミナル'],
+  ['111', '600', '30', '14:30', '15:30', '沖縄高専入口', '那覇バスターミナル'],
+  ['120', '700', '30', '14:30', '15:30', '沖縄高専入口', '那覇バスターミナル'],
+  ['45', '800', '30', '14:30', '15:30', '沖縄高専入口', '那覇バスターミナル'],
 ];
 
 final List<StateProvider<bool>> colorProviders = <StateProvider<bool>>[
@@ -200,18 +203,20 @@ class SearchResult extends ConsumerWidget {
               child: LimitedBox(
                 maxHeight: MediaQuery.of(context).size.height * 0.7,
                 child: ListView(
-                  shrinkWrap: true,
-                  children: const [
-                    SearchResultClass(0, 77, 500, 30, '14:30', '15:30',
-                        '沖縄高専入口', '那覇バスターミナル'),
-                    SearchResultClass(1, 77, 500, 30, '14:30', '15:30',
-                        '沖縄高専入口', '那覇バスターミナル'),
-                    SearchResultClass(2, 77, 500, 30, '14:30', '15:30',
-                        '沖縄高専入口', '那覇バスターミナル'),
-                    SearchResultClass(3, 77, 500, 30, '14:30', '15:30',
-                        '沖縄高専入口', '那覇バスターミナル'),
-                  ],
-                ),
+                    shrinkWrap: true,
+                    children: List.generate(
+                      searchResult.length,
+                      (index) => SearchResultClass(
+                        index,
+                        searchResult[index][0],
+                        searchResult[index][1],
+                        searchResult[index][2],
+                        searchResult[index][3],
+                        searchResult[index][4],
+                        searchResult[index][5],
+                        searchResult[index][6],
+                      ),
+                    )),
               ),
             ),
           ],
@@ -240,9 +245,9 @@ class SearchResultClass extends ConsumerWidget {
       this.startTime, this.endTime, this.startBusStop, this.endBusStop,
       {super.key});
   final int resultNum; //表示される結果一覧の内、何番目の結果か示す番号、バス登録ボタンなどに使用
-  final int busNum; //バスの番号：77番
-  final int cost; //バスの値段：500円
-  final int time; //バスの所要時間：30分
+  final String busNum; //バスの番号：77番
+  final String cost; //バスの値段：500円
+  final String time; //バスの所要時間：30分
   final String startTime; //バスの発車時刻,14:30
   final String endTime; //バスの到着時刻,15:30
   final String startBusStop; //乗るバス停の名前：沖縄高専入口
@@ -297,6 +302,7 @@ class SearchResultClass extends ConsumerWidget {
                   ),
                   BusRegisterationButton(
                     providers: colorProviders[resultNum],
+                    num: resultNum,
                   ),
                   Expanded(
                     child: Container(
@@ -380,9 +386,11 @@ class SearchResultClass extends ConsumerWidget {
 }
 
 class BusRegisterationButton extends ConsumerWidget {
-  const BusRegisterationButton({super.key, required this.providers});
+  const BusRegisterationButton(
+      {super.key, required this.providers, required this.num});
 
   final StateProvider<bool> providers;
+  final int num;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -397,8 +405,13 @@ class BusRegisterationButton extends ConsumerWidget {
           color: color ? Colors.red : Colors.white,
         ),
         child: IconButton(
-          onPressed: () {
+          onPressed: () async {
             ref.read(providers.notifier).state = !color;
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            if (ref.read(providers.notifier).state == !color) {
+              prefs.setStringList("two", searchResult[num]);
+              print(ref.read(providers.notifier).state ? "登録" : "解除");
+            }
           },
           icon: Icon(
             Icons.directions_bus_filled_sharp,
