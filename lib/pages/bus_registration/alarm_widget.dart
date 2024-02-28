@@ -3,6 +3,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vibration/vibration.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 import 'dart:async';
 
 // バス到着アラーム
@@ -42,6 +44,11 @@ class _AlarmState extends ConsumerState<Alarm> {
 
     _requestIOSPermission();  // iOSでの通知の許可
     _initializePlatformSpecifics(); // macOS(Darwin プラットフォーム)用の通知の初期化
+
+    // タイムゾーンデータベースの初期化
+    tz.initializeTimeZones();
+    // ローカルロケーションのタイムゾーンを東京に設定
+    tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
   }
 
   // iOSでの通知の許可
@@ -80,11 +87,21 @@ class _AlarmState extends ConsumerState<Alarm> {
   }
 
   // 通知を表示させる
-  Future<void> _showNotification(String title, String body) async {
+  Future<void> _scheduleNotification(int id, String title, String body) async {
+    var scheduleNotificationDateTime = DateTime.now().add(const Duration(seconds: 5));
+
     var androidChannelSpecifics = const AndroidNotificationDetails(
-      'CHANNEL_ID',
-      'CHANNEL_NAME',
-      channelDescription: "CHANNEL_DESCRIPTION",
+      'CHANNEL_ID 1',
+      'CHANNEL_NAME 1',
+      channelDescription: "CHANNEL_DESCRIPTION 1",
+      icon: 'app_icon',
+      // sound: RawResourceAndroidNotificationSound('my_sound'),
+      largeIcon: DrawableResourceAndroidBitmap('app_icon'),
+      enableLights: true,
+      color: Color.fromARGB(255, 255, 0, 0),
+      ledColor: Color.fromARGB(255, 255, 0, 0),
+      ledOnMs: 1000,
+      ledOffMs: 500,
       importance: Importance.max,
       priority: Priority.high,
       playSound: false,
@@ -92,18 +109,24 @@ class _AlarmState extends ConsumerState<Alarm> {
       styleInformation: DefaultStyleInformation(true, true),
     );
 
-    var iosChannelSpecifics = const DarwinNotificationDetails();
-
+    var iosChannelSpecifics = DarwinNotificationDetails(
+      // sound: 'my_sound.aiff',
+    );
     var platformChannelSpecifics = NotificationDetails(
-        android: androidChannelSpecifics, iOS: iosChannelSpecifics);
+      android: androidChannelSpecifics, iOS: iosChannelSpecifics
+    );
 
-    await flutterLocalNotificationsPlugin.show(
+    debugPrint('通知予約まえ');
+    await flutterLocalNotificationsPlugin.zonedSchedule(
       0, // Notification ID
       title, // Notification Title
       body, // Notification Body, set as null to remove the body
+      tz.TZDateTime.from(scheduleNotificationDateTime, tz.local), // 5秒後に表示
       platformChannelSpecifics,
       payload: 'New Payload', // Notification Payload
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
     );
+    debugPrint('通知予約あと');
   } 
 
   @override
@@ -139,38 +162,41 @@ class _AlarmState extends ConsumerState<Alarm> {
             Consumer(
               builder: (context, ref, child) {
                 return Switch(
+                  activeColor: Colors.white,
+                  activeTrackColor: Color(0xFFBD2B2A),
                   value: arrivalAlarm,
                   onChanged: (bool value) async {
                     ref.read(busArrivalAlarmProvider.notifier).state = value;
                     if (value) {
-                      await alarm.start(3);
+                      // await alarm.start(3);
+                      /** バックエンドからもらった値を入れる */
+                      _scheduleNotification(0, 'バス到着まであと${5}分です', 'バス停に向かいましょう');
+
                       if (context.mounted) {
-                        /** バックエンドからもらった値を入れる */
-                        _showNotification('バス到着まであと${5}分です', 'バス停に向かいましょう');
                         
-                        if (await Vibration.hasVibrator() ?? false) {
-                          Vibration.vibrate();
-                        }
+                        // if (await Vibration.hasVibrator() ?? false) {
+                        //   Vibration.vibrate();
+                        // }
                 
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text("あと${5}分"),
-                              content: const Text("バス到着まであと${5}分です"),
-                              actions: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    alarm.stop();
-                                    Vibration.cancel();
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('ストップ'),
-                                ),
-                              ],
-                            );
-                          }
-                        );
+                        // showDialog(
+                        //   context: context,
+                        //   builder: (context) {
+                        //     return AlertDialog(
+                        //       title: const Text("あと${5}分"),
+                        //       content: const Text("バス到着まであと${5}分です"),
+                        //       actions: [
+                        //         ElevatedButton(
+                        //           onPressed: () {
+                        //             alarm.stop();
+                        //             Vibration.cancel();
+                        //             Navigator.pop(context);
+                        //           },
+                        //           child: const Text('ストップ'),
+                        //         ),
+                        //       ],
+                        //     );
+                        //   }
+                        // );
                 
                       }
                     }
@@ -217,7 +243,7 @@ class _AlarmState extends ConsumerState<Alarm> {
           children: [
             const Text(
               '寝落ち防止アラーム',
-              style: const TextStyle(fontSize: 25),
+              style: TextStyle(fontSize: 25),
             ),
             Switch(
               value: wakeUpAlarm,
@@ -229,75 +255,6 @@ class _AlarmState extends ConsumerState<Alarm> {
           ],
         ),
         wakeUpAlarmWidget,
-
-        // WakeUpAlarmOn(
-        //   busStops: widget.busStops,
-        //   busStopAlarms: busStopAlarms,
-        //   busStopAlarmProvider: widget.busStopAlarmProvider
-        // ),
-
-        // Container(
-        //   decoration: const BoxDecoration(
-        //     color: Color(0xFFFFF4D9),
-        //     borderRadius: BorderRadius.all(Radius.circular(10)),
-        //   ),
-        //   width: 360,
-        //   child: Column(
-        //     children: [
-        //       Row(
-        //         mainAxisAlignment: MainAxisAlignment.center,
-        //         children: [
-        //           Column(
-        //             crossAxisAlignment: CrossAxisAlignment.start,
-        //             children: [
-        //               for (int i = 0; i < widget.busStops.length - 1; i++) ... {
-        //                 Column(
-        //                   crossAxisAlignment: CrossAxisAlignment.start,
-        //                   children: [
-        //                     Row(
-        //                       children: [
-        //                         Consumer(
-        //                           builder: (context, ref, child) {
-        //                             return Switch(
-        //                               value: busStopAlarms[i],
-        //                               onChanged: (value) {
-        //                                 ref.read(widget.busStopAlarmProvider[i].notifier).state = value;
-        //                               },
-        //                             );
-        //                           }
-        //                         ),
-        //                         Text(widget.busStops[i], style: const TextStyle(fontSize: 20)),
-        //                       ],
-        //                     ),
-        //                     const Padding(
-        //                       padding: EdgeInsets.only(left: 16.0),
-        //                       child: Icon(Icons.south),
-        //                     ),
-        //                   ],
-        //                 )
-        //               },
-        //               Row(
-        //                 children: [
-        //                   Consumer(
-        //                     builder: (context, ref, child) {
-        //                       return Switch(
-        //                         value: busStopAlarms[busStopAlarms.length - 1],
-        //                         onChanged: (value) {
-        //                           ref.read(widget.busStopAlarmProvider[widget.busStops.length - 1].notifier).state = value;
-        //                         },
-        //                       );
-        //                     }
-        //                   ),
-        //                   Text(widget.busStops[widget.busStops.length - 1], style: const TextStyle(fontSize: 20)),
-        //                 ],
-        //               ),
-        //             ]
-        //           ),
-        //         ],
-        //       ),
-        //     ],
-        //   ),
-        // ),
       ],
     );
   }
@@ -343,6 +300,11 @@ class WakeUpAlarmOn extends ConsumerWidget {
                               value: busStopAlarms[i],
                               onChanged: (value) {
                                 ref.read(busStopAlarmProvider[i].notifier).state = value;
+
+                                if (value) {
+                                  // _scheduleNotification(i, 'title', 'body');
+                                }
+
                               },
                             ),
                             Text(busStops[i], style: const TextStyle(fontSize: 20)),
@@ -429,3 +391,90 @@ class TestAlarm {
     FlutterRingtonePlayer.stop();
   }
 }
+
+// import 'dart:async';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+// void main() {
+//   runApp(MyApp());
+// }
+
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: MyHomePage(),
+//     );
+//   }
+// }
+
+// class MyHomePage extends StatefulWidget {
+//   @override
+//   _MyHomePageState createState() => _MyHomePageState();
+// }
+
+// class _MyHomePageState extends State<MyHomePage> {
+//   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+//       FlutterLocalNotificationsPlugin();
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     // タイムゾーンデータベースの初期化
+//     tz.initializeTimeZones();
+//     // ローカルロケーションのタイムゾーンを東京に設定
+//     tz.setLocalLocation(tz.getLocation("Asia/Tokyo"));
+//     var initializationSettingsAndroid =
+//         AndroidInitializationSettings('@mipmap/ic_launcher');
+//     // var initializationSettingsIOS = IOSInitializationSettings();
+//     var initializationSettings = InitializationSettings(
+//         android: initializationSettingsAndroid);
+//     flutterLocalNotificationsPlugin.initialize(initializationSettings);
+//   }
+
+//   Future onSelectNotification(String payload) async {
+//     // 通知がタップされた時の処理
+//     debugPrint("Notification tapped with payload: $payload");
+//   }
+
+//   Future _scheduleNotification() async {
+//     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+//       'your_channel_id',
+//       'your_channel_name',
+//       channelDescription: 'your_channel_description',
+//       importance: Importance.max,
+//       priority: Priority.high,
+//     );
+//     // var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+//     var platformChannelSpecifics = NotificationDetails(
+//         android: androidPlatformChannelSpecifics);
+
+//     await flutterLocalNotificationsPlugin.zonedSchedule(
+//       0, // 通知のID
+//       '通知タイトル',
+//       '通知メッセージ',
+//       tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)), // 5秒後に通知
+//       platformChannelSpecifics,
+//       androidAllowWhileIdle: true,
+//       uiLocalNotificationDateInterpretation:
+//           UILocalNotificationDateInterpretation.absoluteTime,
+//       matchDateTimeComponents: DateTimeComponents.time,
+//     );
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Flutter Notification Example'),
+//       ),
+//       body: Center(
+//         child: ElevatedButton(
+//           onPressed: _scheduleNotification,
+//           child: Text('5秒後に通知'),
+//         ),
+//       ),
+//     );
+//   }
+// }

@@ -8,7 +8,7 @@ import Flutter
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
 
-    /*　ここから追加　*/
+    /* Flutterで毎朝8時に飛ぶローカル通知を実装する【OB-1アプデ】(https://zenn.dev/flutteruniv_dev/articles/434310831e41f3)*/
     if #available(iOS 10.0, *) {
       UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
     }

@@ -69,6 +69,9 @@ class MainPage extends ConsumerWidget {
     return Scaffold(
       body: bodyWidget,
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white,
+        backgroundColor: Color(0xFFBD2B2A),
         type: BottomNavigationBarType.fixed,
         currentIndex: PageType.values.indexOf(currentPage),
         items: const [

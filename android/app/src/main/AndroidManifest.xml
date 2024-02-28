@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- ここまで追加 -->
 
+    <!-- 【Flutter】AndroidのPush通知使用許諾を表示する方法(https://zenn.dev/r0227n/articles/flutter_android_notification_permission) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
     <application
         android:label="bus_app"
         android:name="${applicationName}"
