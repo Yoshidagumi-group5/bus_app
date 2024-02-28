@@ -26,6 +26,10 @@ const List<List<String>> routes = [
   ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
 ];
 
+final pageWidgetProvider = StateProvider<Widget>(
+  (ref) => NoRoute()
+);
+
 // 各ルートのバス到着アラーム
 final List<StateProvider<bool>> busArrivalAlarmProviders = [
   for (int i = 0; i < routes.length; i++) StateProvider((ref) => false)
@@ -54,13 +58,15 @@ final routeToggleProvider = StateProvider<List<bool>>(
   }
 );
 // 表示するルートのウェイジェットの状態を管理
-// final routeWidgetProvider = StateProvider<Widget>(
-//   (ref) => Route(routeNo: 'ルート${1}', busStops: routes[0], busStopAlarmProvider: busStopAlarmProviders[0]),
-// );
 final routeWidgetProvider = StateProvider<Widget>(
-  (ref) => const NoRoute(),
+  (ref) => Route(
+    routeNo: 'ルート${1}',
+    busStops: routes[0],
+    busStopAlarmProvider: busStopAlarmProviders[0],
+    busArrivalAlarmProvider: busArrivalAlarmProviders[0],
+    wakeUpAlarmProvider: wakeUpAlarmProviders[0]
+  ),
 );
-
 
 const List<Widget> options = <Widget>[
   Text('アラーム', style: TextStyle(fontSize: 16)),
@@ -90,19 +96,9 @@ class BusRegistration extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    final List<Widget> routeWidgets = <Widget>[
-      const NoRoute(),
-      for (int i = 1; i < routes.length; i++) Route(
-        routeNo: 'ルート${i}',
-        busStops: routes[i - 1],
-        busStopAlarmProvider: busStopAlarmProviders[i - 1],
-        busArrivalAlarmProvider: busArrivalAlarmProviders[i - 1],
-        wakeUpAlarmProvider: wakeUpAlarmProviders[i - 1]
-      )
-    ];    
-
-    final route = ref.watch(routeToggleProvider);
-    final routeWidget = ref.watch(routeWidgetProvider);
+    final pageWidget = ref.watch(pageWidgetProvider);
+    ref.read(pageWidgetProvider.notifier).state = 
+        routes.length == 0 ? NoRoute() : YesRoute();
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFE8AE),
@@ -123,56 +119,78 @@ class BusRegistration extends ConsumerWidget {
           Positioned.fill(
             child: Image.asset('assets/images/shisa_touka_trimming.png', fit: BoxFit.cover),
           ),
-          // routeWidget == const NoRoute()
-          // ? const NoRoute()
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Consumer(
-                      builder: (context, ref, child) {
-                        return ToggleButtons(
-                          direction: Axis.horizontal,
-                          onPressed: (int index) {
-                            ref.read(routeToggleProvider.notifier).state =
-                                List.generate(route.length, (i) => i == index);
-                            ref.read(routeWidgetProvider.notifier).state = routeWidgets[index];
-                                  
-                            // ルートを切り替える時、optionWidgetはアラームを表示させる
-                            ref.read(optionProvider.notifier).state = [true, false];
-                            ref.read(optionWidgetProvider.notifier).state = 
-                                Alarm(
-                                  busStops: routes[index],
-                                  busStopAlarmProvider: busStopAlarmProviders[index],
-                                  busArrivalAlarmProvider: busArrivalAlarmProviders[index],
-                                  wakeUpAlarmProvider: wakeUpAlarmProviders[index],
-                                );
-                          },
-                          borderRadius: const BorderRadius.all(Radius.circular(5)),
-                          borderColor: const Color(0xFFE2A5A4),
-                          selectedBorderColor: const Color(0xFFE2A5A4),
-                          borderWidth: 2,
-                          selectedColor: Colors.black,
-                          fillColor: const Color(0xFFE2A5A4),
-                          color: Colors.black,
-                          constraints: const BoxConstraints(
-                            minHeight: 40.0,
-                            minWidth: 80.0,
-                          ),
-                          isSelected: route,
-                          children: routes.asMap().entries.map((entry) => Text('ルート${entry.key + 1}', style: const TextStyle(fontSize: 16))).toList(),
-                        );
-                      }
+          pageWidget,
+        ],
+      ),
+    );
+  }
+}
+
+class YesRoute extends ConsumerWidget {
+  const YesRoute({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final List<Widget> routeWidgets = <Widget>[
+      const NoRoute(),
+      for (int i = 1; i < routes.length; i++) Route(
+        routeNo: 'ルート${i}',
+        busStops: routes[i - 1],
+        busStopAlarmProvider: busStopAlarmProviders[i - 1],
+        busArrivalAlarmProvider: busArrivalAlarmProviders[i - 1],
+        wakeUpAlarmProvider: wakeUpAlarmProviders[i - 1]
+      )
+    ];    
+
+    final route = ref.watch(routeToggleProvider);
+    final routeWidget = ref.watch(routeWidgetProvider);
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Consumer(
+                builder: (context, ref, child) {
+                  return ToggleButtons(
+                    direction: Axis.horizontal,
+                    onPressed: (int index) {
+                      ref.read(routeToggleProvider.notifier).state =
+                          List.generate(route.length, (i) => i == index);
+                      ref.read(routeWidgetProvider.notifier).state = routeWidgets[index];
+                            
+                      // ルートを切り替える時、optionWidgetはアラームを表示させる
+                      ref.read(optionProvider.notifier).state = [true, false];
+                      ref.read(optionWidgetProvider.notifier).state = 
+                          Alarm(
+                            busStops: routes[index],
+                            busStopAlarmProvider: busStopAlarmProviders[index],
+                            busArrivalAlarmProvider: busArrivalAlarmProviders[index],
+                            wakeUpAlarmProvider: wakeUpAlarmProviders[index],
+                          );
+                    },
+                    borderRadius: const BorderRadius.all(Radius.circular(5)),
+                    borderColor: const Color(0xFFE2A5A4),
+                    selectedBorderColor: const Color(0xFFE2A5A4),
+                    borderWidth: 2,
+                    selectedColor: Colors.black,
+                    fillColor: const Color(0xFFE2A5A4),
+                    color: Colors.black,
+                    constraints: const BoxConstraints(
+                      minHeight: 40.0,
+                      minWidth: 80.0,
                     ),
-                  ),
-                ),
-                routeWidget,
-              ],
+                    isSelected: route,
+                    children: routes.asMap().entries.map((entry) => Text('ルート${entry.key + 1}', style: const TextStyle(fontSize: 16))).toList(),
+                  );
+                }
+              ),
             ),
           ),
+          routeWidget,
         ],
       ),
     );
