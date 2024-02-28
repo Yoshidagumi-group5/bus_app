@@ -20,15 +20,13 @@ class TestMap extends ConsumerWidget {
   }
 }
 
-
 // 「乗換あり」ボタンと「普通を外す」ボタンの状態管理
 final transColorProvider = StateProvider<bool>((ref) => false);
 final futsuColorProvider = StateProvider<bool>((ref) => false);
 
 // 「じかん」ボタンの時間の管理
-final selectedDateTimeProvider = StateProvider<DateTime>(
-  (ref) => DateTime.now()
-);
+final selectedDateTimeProvider =
+    StateProvider<DateTime>((ref) => DateTime.now());
 
 //「のるところ」「おりるところ」のテキストの管理
 final leaveBusstopProvider = StateProvider<String>(
@@ -41,7 +39,8 @@ final arriveBusstopProvider = StateProvider<String>(
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
-  Future<DateTime> _selectDateTime(BuildContext context, DateTime selectedDateTime) async {
+  Future<DateTime> _selectDateTime(
+      BuildContext context, DateTime selectedDateTime) async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: selectedDateTime,
@@ -51,10 +50,9 @@ class HomePage extends ConsumerWidget {
 
     if (pickedDate != null && pickedDate != selectedDateTime) {
       TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.fromDateTime(selectedDateTime),
-        initialEntryMode: TimePickerEntryMode.input
-      );
+          context: context,
+          initialTime: TimeOfDay.fromDateTime(selectedDateTime),
+          initialEntryMode: TimePickerEntryMode.input);
 
       if (pickedTime != null) {
         selectedDateTime = DateTime(
@@ -92,7 +90,8 @@ class HomePage extends ConsumerWidget {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset('assets/images/shisa_touka_trimming.png', fit: BoxFit.cover),
+            child: Image.asset('assets/images/shisa_touka_trimming.png',
+                fit: BoxFit.cover),
           ),
           SingleChildScrollView(
             child: Column(
@@ -101,19 +100,17 @@ class HomePage extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: CheckButton(
-                        text: '乗換あり',
-                        provider: transColorProvider,
-                        iconData: Icons.directions_bus_outlined,
-                      )
-                    ),
+                        child: CheckButton(
+                      text: '乗換あり',
+                      provider: transColorProvider,
+                      iconData: Icons.directions_bus_outlined,
+                    )),
                     Expanded(
-                      child: CheckButton(
-                        text: '普通を外す',
-                        provider: futsuColorProvider,
-                        iconData: Icons.trending_up,
-                      )
-                    ),
+                        child: CheckButton(
+                      text: '高速バス',
+                      provider: futsuColorProvider,
+                      iconData: Icons.trending_up,
+                    )),
                   ],
                 ),
                 TextButton(
@@ -122,7 +119,8 @@ class HomePage extends ConsumerWidget {
                   width: 200,
                   height: 70,
                   onPressed: () async {
-                    ref.read(selectedDateTimeProvider.notifier).state = await _selectDateTime(context, selectedDateTime);
+                    ref.read(selectedDateTimeProvider.notifier).state =
+                        await _selectDateTime(context, selectedDateTime);
                   },
                 ),
                 TextButton(
@@ -147,9 +145,11 @@ class HomePage extends ConsumerWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       // 「のるところ」と「おりるところ」の入れ替え
-                      if (!(leaveBusstop == 'のるところ' || arriveBusstop == 'おりるところ')) {
+                      if (!(leaveBusstop == 'のるところ' ||
+                          arriveBusstop == 'おりるところ')) {
                         String tmp = leaveBusstop;
-                        ref.read(leaveBusstopProvider.notifier).state = arriveBusstop;
+                        ref.read(leaveBusstopProvider.notifier).state =
+                            arriveBusstop;
                         ref.read(arriveBusstopProvider.notifier).state = tmp;
                       }
                     },
@@ -157,7 +157,8 @@ class HomePage extends ConsumerWidget {
                         foregroundColor: Colors.black,
                         backgroundColor: Colors.white,
                         side: const BorderSide(
-                            color: Color.fromARGB(255, 226, 165, 164), width: 2),
+                            color: Color.fromARGB(255, 226, 165, 164),
+                            width: 2),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -207,7 +208,8 @@ class HomePage extends ConsumerWidget {
                         foregroundColor: Colors.black,
                         backgroundColor: const Color(0xFFBD2B2A),
                         side: const BorderSide(
-                            color: Color.fromARGB(255, 226, 165, 164), width: 2),
+                            color: Color.fromARGB(255, 226, 165, 164),
+                            width: 2),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -277,12 +279,11 @@ class TextButton extends StatelessWidget {
 }
 
 class CheckButton extends ConsumerWidget {
-  const CheckButton({
-    super.key,
-    required this.text,
-    required this.provider,
-    required this.iconData
-  });
+  const CheckButton(
+      {super.key,
+      required this.text,
+      required this.provider,
+      required this.iconData});
 
   final String text;
   final StateProvider<bool> provider;
@@ -294,41 +295,39 @@ class CheckButton extends ConsumerWidget {
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Consumer(
-        builder: (context, WidgetRef ref, child) {
-          return ElevatedButton(
-            onPressed: () {
-              ref.read(provider.notifier).state = !color;
-            },
-            style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.black,
-                backgroundColor: color ? const Color(0xFFBD2B2A) : Colors.white,
-                side: const BorderSide(color: Color(0xFFE2A5A4), width: 2),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                fixedSize: const Size(150, 80)),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  iconData,
-                  size: 40,
+      child: Consumer(builder: (context, WidgetRef ref, child) {
+        return ElevatedButton(
+          onPressed: () {
+            ref.read(provider.notifier).state = !color;
+          },
+          style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.black,
+              backgroundColor: color ? const Color(0xFFBD2B2A) : Colors.white,
+              side: const BorderSide(color: Color(0xFFE2A5A4), width: 2),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              fixedSize: const Size(150, 80)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                iconData,
+                size: 40,
+                color: color ? Colors.white : const Color(0xFFBD2B2A),
+              ),
+              Text(
+                text,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
                   color: color ? Colors.white : const Color(0xFFBD2B2A),
                 ),
-                Text(
-                  text,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: color ? Colors.white : const Color(0xFFBD2B2A),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-      ),
+              ),
+            ],
+          ),
+        );
+      }),
     );
   }
 }
