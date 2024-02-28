@@ -44,6 +44,8 @@ class _AlarmState extends ConsumerState<Alarm> {
 
     _requestIOSPermission();  // iOSでの通知の許可
     _initializePlatformSpecifics(); // macOS(Darwin プラットフォーム)用の通知の初期化
+    // _showNotification();
+    // _scheduleNotification();
 
     // タイムゾーンデータベースの初期化
     tz.initializeTimeZones();
@@ -87,19 +89,46 @@ class _AlarmState extends ConsumerState<Alarm> {
   }
 
   // 通知を表示させる
-  Future<void> _scheduleNotification(int id, String title, String body) async {
-    var scheduleNotificationDateTime = DateTime.now().add(const Duration(seconds: 5));
-
+  Future<void> _showNotification(int id, String title, String body) async {
     var androidChannelSpecifics = const AndroidNotificationDetails(
+      'CHANNEL_ID',
+      'CHANNEL_NAME',
+      channelDescription: "CHANNEL_DESCRIPTION",
+      importance: Importance.max,
+      priority: Priority.high,
+      playSound: false,
+      timeoutAfter: 5000,
+      styleInformation: DefaultStyleInformation(true, true),
+    );
+
+    var iosChannelSpecifics = DarwinNotificationDetails();
+
+    var platformChannelSpecifics = NotificationDetails(
+        android: androidChannelSpecifics, iOS: iosChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.show(
+      id, // Notification ID
+      title, // Notification Title
+      body, // Notification Body, set as null to remove the body
+      platformChannelSpecifics,
+      payload: 'New Payload', // Notification Payload
+    );
+  }
+
+  Future<void> _scheduleNotification() async {
+    // 5秒後
+    var scheduleNotificationDateTime = DateTime.now().add(Duration(seconds: 5));
+
+    var androidChannelSpecifics = AndroidNotificationDetails(
       'CHANNEL_ID 1',
       'CHANNEL_NAME 1',
       channelDescription: "CHANNEL_DESCRIPTION 1",
       icon: 'app_icon',
-      // sound: RawResourceAndroidNotificationSound('my_sound'),
+      //sound: RawResourceAndroidNotificationSound('my_sound'),
       largeIcon: DrawableResourceAndroidBitmap('app_icon'),
       enableLights: true,
-      color: Color.fromARGB(255, 255, 0, 0),
-      ledColor: Color.fromARGB(255, 255, 0, 0),
+      color: const Color.fromARGB(255, 255, 0, 0),
+      ledColor: const Color.fromARGB(255, 255, 0, 0),
       ledOnMs: 1000,
       ledOffMs: 500,
       importance: Importance.max,
@@ -110,24 +139,25 @@ class _AlarmState extends ConsumerState<Alarm> {
     );
 
     var iosChannelSpecifics = DarwinNotificationDetails(
-      // sound: 'my_sound.aiff',
-    );
-    var platformChannelSpecifics = NotificationDetails(
-      android: androidChannelSpecifics, iOS: iosChannelSpecifics
+      //sound: 'my_sound.aiff',
     );
 
-    debugPrint('通知予約まえ');
+    var platformChannelSpecifics = NotificationDetails(
+      android: androidChannelSpecifics,
+      iOS: iosChannelSpecifics,
+    );
+
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      0, // Notification ID
-      title, // Notification Title
-      body, // Notification Body, set as null to remove the body
-      tz.TZDateTime.from(scheduleNotificationDateTime, tz.local), // 5秒後に表示
+      0,
+      'Test Title',
+      'Test Body',
+      tz.TZDateTime.from(scheduleNotificationDateTime, tz.local),// 5秒後に表示
       platformChannelSpecifics,
-      payload: 'New Payload', // Notification Payload
+      payload: 'Test Payload',
+      androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
     );
-    debugPrint('通知予約あと');
-  } 
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +200,8 @@ class _AlarmState extends ConsumerState<Alarm> {
                     if (value) {
                       // await alarm.start(3);
                       /** バックエンドからもらった値を入れる */
-                      _scheduleNotification(0, 'バス到着まであと${5}分です', 'バス停に向かいましょう');
+                      // _showNotification(0, 'バス到着まであと${5}分です', 'バス停に向かいましょう');
+                      _scheduleNotification();
 
                       if (context.mounted) {
                         
