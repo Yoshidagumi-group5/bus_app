@@ -1,163 +1,232 @@
 import 'dart:io';
-import 'dart:async';
 import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager/platform_tags.dart';
 
-class ReadOkica extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => MyAppState();
-}
+class ReadOkica extends StatelessWidget {
+  const ReadOkica({Key? key}) : super(key: key);
 
-class MyAppState extends State<ReadOkica> {
-  String _message = '';
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.dark(),
-        home: Scaffold(
-            body: SafeArea(
-          child: Stack(children: myWidgets()),
-        )));
+    return const MaterialApp(
+      home: NfcReadPage(),
+    );
+  }
+}
+
+class NfcReadPage extends StatefulWidget {
+  const NfcReadPage({Key? key}) : super(key: key);
+
+  @override
+  State<NfcReadPage> createState() => _NfcReadPageState();
+}
+
+class _NfcReadPageState extends State<NfcReadPage> {
+  int balance = 0;
+  bool showAlert = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // ページが初期化された瞬間にNFCのスキャンを開始する
+    startNfcScan();
   }
 
-  List<Widget> myWidgets() {
-    return <Widget>[
-      Positioned(
-        bottom: 60.0,
-        left: 0.0,
-        right: 0,
-        child: IconButton(
-          icon: Icon(Icons.play_circle_fill, size: 60, color: Colors.white),
-          onPressed: () => onStart(),
+  @override
+  void dispose() {
+    // ページが破棄される時にNFCのスキャンを停止する
+    NfcManager.instance.stopSession();
+    super.dispose();
+  }
+
+  // NFCのスキャンを開始する関数
+  void startNfcScan() {
+    NfcManager.instance.startSession(
+      onDiscovered: (tag) async {
+        if (showAlert) {
+          // カードが検出されたらポップアップを表示する
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const AlertDialog(
+                title: Text('カードをかざしてください'),
+              );
+            },
+          );
+          setState(() {
+            // ポップアップが表示されたことを記録する
+            showAlert = false;
+          });
+        }
+        final systemCode = [0x8F, 0xC1];
+        final serviceCode = [0x50, 0xD7];
+        final pollingRes = await polling(tag, systemCode: systemCode);
+        final idm = pollingRes.sublist(2, 10);
+        final requestServiceRes = await requestService(
+          tag,
+          idm: idm,
+          serviceCode: serviceCode,
+        );
+        // 情報が存在すれば残高情報を取得する
+        if (requestServiceRes[11] == 00 && requestServiceRes[12] == 0) {
+          final readWithoutEncryptionRes = await readWithoutEncryption(
+            tag,
+            idm: idm,
+            serviceCode: serviceCode,
+            blockCount: 1,
+          );
+          final balance = parse(readWithoutEncryptionRes);
+          setState(() {
+            this.balance = balance;
+          });
+          // 情報が読み取れたらポップアップを閉じる
+          Navigator.of(context).pop();
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('$balance 円'),
+            ],
+          ),
         ),
       ),
-      Positioned(
-          left: 30,
-          right: 30,
-          top: 50,
-          bottom: 120,
-          child: Container(
-            padding: EdgeInsets.all(14.0),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.white, width: 1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(_message, style: TextStyle(fontSize: 20)),
-          )),
-    ];
-  }
-
-  msg(String s) {
-    print(s);
-    setState(() {
-      _message = s;
-    });
-  }
-
-  /// onStart
-  Future onStart() async {
-    if (NfcManager.instance.isAvailable() == false) {
-      msg('NFC is not available');
-      return;
-    }
-    msg('Please touch Okica');
-    try {
-      await NfcManager.instance.startSession(
-        alertMessage: "Please touch Suica",
-        onDiscovered: (tag) async {
-          try {
-            await onDiscoveredForIos(tag);
-          } catch (e) {
-            msg('Error\n${e.toString()}');
-            NfcManager.instance
-                .stopSession(errorMessage: 'Error ${e.toString()}');
-          }
-          print('stopSession');
-          NfcManager.instance.stopSession();
-        },
-      );
-    } catch (e) {
-      msg('Error\n${e.toString()}');
-    }
-  }
-
-  /// iOS向け
-  Future onDiscoveredForIos(NfcTag tag) async {
-    final felica = FeliCa.from(tag);
-    if (felica == null) {
-      msg("Unsupported card for type FeliCa");
-      return;
-    }
-
-    // 属性情報(008B)から残高を取得
-    final res = await felica.readWithoutEncryption(
-      serviceCodeList: [
-        Uint8List.fromList([0x8b, 0x00])
-      ],
-      blockList: [
-        Uint8List.fromList([0x80, 0])
-      ],
     );
-    // 残高[11][12]
-    int balance = -1;
-    if (res.blockData.length > 0) {
-      balance = res.blockData[0][12] * 256 + res.blockData[0][11];
-    }
-
-    // 利用履歴(090F)から履歴20件を取得 ※一度に12件まで
-    final list1 = [
-      for (int i = 0; i < 12; i++) Uint8List.fromList([0x80, i])
-    ];
-    final res1 = await felica.readWithoutEncryption(
-      serviceCodeList: [
-        Uint8List.fromList([0x0f, 0x09])
-      ],
-      blockList: list1,
-    );
-    final list2 = [
-      for (int i = 12; i < 20; i++) Uint8List.fromList([0x80, i])
-    ];
-    final res2 = await felica.readWithoutEncryption(
-      serviceCodeList: [
-        Uint8List.fromList([0x0f, 0x09])
-      ],
-      blockList: list2,
-    );
-    final blocklist = [...res1.blockData, ...res2.blockData];
-
-    String histories = '';
-    for (List<int> b in blocklist) {
-      // 年月日[4][5](7bit 4bit 5bit)
-      int idate = b[4] * 256 + b[5];
-      String y = ((idate & 0xFE00) >> 9).toString();
-      String m = ((idate & 0x01E0) >> 5).toString().padLeft(2, '0');
-      String d = ((idate & 0x001F) >> 0).toString().padLeft(2, '0');
-      histories += '${y}-${m}-${d}';
-      // 残高[10][11]
-      histories +=
-          '  ' + (b[11] * 256 + b[10]).toString().padLeft(5, ' ') + ' yen';
-      histories += '\n';
-    }
-
-    String s = '';
-    s += 'IDm ${intlist_to_string(felica.currentIDm)}\n';
-    s += 'SystemCode ${intlist_to_string(felica.currentSystemCode)}\n';
-    s += 'Balance ${balance} yen\n';
-    s += histories;
-    msg(s);
-
-    NfcManager.instance.stopSession(alertMessage: 'Succeeded');
   }
 
-  /// Uint8Listを16進数の文字列に変換（デバッグ用）
-  String intlist_to_string(List<int> list) {
-    String s = '';
-    for (int i in list) {
-      s += i.toRadixString(16).toUpperCase().padLeft(2, '0') + ' ';
+  /// Polling
+  Future<Uint8List> polling(
+    NfcTag tag, {
+    required List<int> systemCode,
+  }) async {
+    final List<int> packet = [];
+    if (Platform.isAndroid) {
+      packet.add(0x06);
     }
-    return s;
+    packet.add(0x00);
+    packet.addAll(systemCode.reversed);
+    packet.add(0x01);
+    packet.add(0x0F);
+
+    final command = Uint8List.fromList(packet);
+
+    late final Uint8List? res;
+
+    if (NfcF.from(tag) != null) {
+      final nfcf = NfcF.from(tag);
+      res = await nfcf?.transceive(data: command);
+    } else if (FeliCa.from(tag) != null) {
+      final felica = FeliCa.from(tag);
+      res = await felica?.sendFeliCaCommand(command);
+    }
+    if (res == null) {
+      throw Exception();
+    }
+    return res;
+  }
+
+  /// RequestService
+  Future<Uint8List> requestService(
+    NfcTag tag, {
+    required Uint8List idm,
+    required List<int> serviceCode,
+  }) async {
+    final nodeCodeList = Uint8List.fromList(serviceCode);
+    final List<int> packet = [];
+    if (Platform.isAndroid) {
+      packet.add(0x06);
+    }
+    packet.add(0x02);
+    packet.addAll(idm);
+    packet.add(nodeCodeList.length);
+    packet.addAll(serviceCode.reversed);
+
+    final command = Uint8List.fromList(packet);
+
+    late final Uint8List? res;
+
+    if (NfcF.from(tag) != null) {
+      final nfcf = NfcF.from(tag);
+      res = await nfcf?.transceive(data: command);
+    } else if (FeliCa.from(tag) != null) {
+      final felica = FeliCa.from(tag);
+      res = await felica?.sendFeliCaCommand(command);
+    }
+    if (res == null) {
+      throw Exception();
+    }
+    return res;
+  }
+
+  /// ReadWithoutEncryption
+  Future<Uint8List> readWithoutEncryption(
+    NfcTag tag, {
+    required Uint8List idm,
+    required List<int> serviceCode,
+    required int blockCount,
+  }) async {
+    final List<int> packet = [];
+    if (Platform.isAndroid) {
+      packet.add(0);
+    }
+    packet.add(0x06);
+    packet.addAll(idm);
+    packet.add(serviceCode.length);
+    packet.addAll(serviceCode.reversed);
+    packet.add(blockCount);
+
+    for (int i = 0; i < blockCount; i++) {
+      packet.add(0x80);
+      packet.add(i);
+    }
+    if (Platform.isAndroid) {
+      packet[0] = packet.length;
+    }
+
+    final command = Uint8List.fromList(packet);
+
+    late final Uint8List? res;
+
+    if (NfcF.from(tag) != null) {
+      final nfcf = NfcF.from(tag);
+      res = await nfcf?.transceive(data: command);
+    } else if (FeliCa.from(tag) != null) {
+      final felica = FeliCa.from(tag);
+      res = await felica?.sendFeliCaCommand(command);
+    }
+    if (res == null) {
+      throw Exception();
+    }
+    return res;
+  }
+
+  int parse(Uint8List rweRes) {
+    if (rweRes[10] != 0x00) {
+      throw Exception();
+    }
+    final blockSize = rweRes[12];
+    const blockLength = 16;
+    final data = List.generate(
+        blockSize,
+        (index) =>
+            Uint8List.fromList(List.generate(blockLength, (index) => 0)));
+    for (int i = 0; i < blockSize; i++) {
+      final offset = 13 + i * blockLength;
+      final tmp = rweRes.sublist(offset, offset + blockLength);
+      data[i] = tmp;
+    }
+    final balanceData =
+        Uint8List.fromList(data[0].sublist(0, 4).reversed.toList());
+    return balanceData.buffer.asByteData().getInt32(0);
   }
 }
