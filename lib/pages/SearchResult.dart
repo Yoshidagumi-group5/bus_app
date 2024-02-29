@@ -272,16 +272,7 @@ class _SearchResultState extends State<SearchResult> {
                     shrinkWrap: true,
                     children: List.generate(
                       searchResult.length,
-                      (index) => SearchResultClass(
-                        index,
-                        searchResult[index][0],
-                        searchResult[index][1],
-                        searchResult[index][2],
-                        searchResult[index][3],
-                        searchResult[index][4],
-                        searchResult[index][5],
-                        searchResult[index][6],
-                      ),
+                      (index) => SearchResultClass(index, searchResult[index]),
                     )),
               ),
             ),
@@ -313,17 +304,16 @@ class _SearchResultState extends State<SearchResult> {
 }
 
 class SearchResultClass extends ConsumerWidget {
-  const SearchResultClass(this.resultNum, this.busNum, this.cost, this.time,
-      this.startTime, this.endTime, this.startBusStop, this.endBusStop,
-      {super.key});
+  const SearchResultClass(this.resultNum, this.routeInformation, {super.key});
   final int resultNum; //表示される結果一覧の内、何番目の結果か示す番号、バス登録ボタンなどに使用
-  final String busNum; //バスの番号：77番
-  final String cost; //バスの値段：500円
-  final String time; //バスの所要時間：30分
-  final String startTime; //バスの発車時刻,14:30
-  final String endTime; //バスの到着時刻,15:30
-  final String startBusStop; //乗るバス停の名前：沖縄高専入口
-  final String endBusStop; //降りるバス停の名前：那覇バスターミナル
+  //final String busNum; //バスの番号：77番
+  //final String cost; //バスの値段：500円
+  //final String time; //バスの所要時間：30分
+  //final String startTime; //バスの発車時刻,14:30
+  //final String endTime; //バスの到着時刻,15:30
+  //final String startBusStop; //乗るバス停の名前：沖縄高専入口
+  //final String endBusStop; //降りるバス停の名前：那覇バスターミナル
+  final List<String> routeInformation;
   @override
   Widget build(
     BuildContext context,
@@ -359,7 +349,8 @@ class SearchResultClass extends ConsumerWidget {
                           color: Colors.white,
                         ),
                         child: Text(
-                          busNum.toString(),
+                          routeInformation[0],
+                          //busNum.toString(),
                           style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         )),
@@ -367,7 +358,7 @@ class SearchResultClass extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 4.0, bottom: 4.0),
                     child: Text(
-                      startBusStop,
+                      routeInformation[5],
                       style: const TextStyle(
                           fontSize: 17, fontWeight: FontWeight.bold),
                     ),
@@ -382,7 +373,7 @@ class SearchResultClass extends ConsumerWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          "$cost円　$time分",
+                          routeInformation[1] + "円" + routeInformation[2] + "分",
                           style: const TextStyle(fontSize: 15),
                         ),
                       ),
@@ -400,12 +391,12 @@ class SearchResultClass extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        startTime,
+                        routeInformation[3],
                         style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        startBusStop,
+                        routeInformation[5],
                         style: const TextStyle(
                           fontSize: 15,
                         ),
@@ -429,12 +420,12 @@ class SearchResultClass extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        endTime,
+                        routeInformation[4],
                         style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        endBusStop,
+                        routeInformation[6],
                         style: const TextStyle(
                           fontSize: 15,
                         ),
@@ -482,9 +473,9 @@ class BusRegisterationButton extends ConsumerWidget {
               await Prefs.setStringList(
                   ((num + Prefs.getInt("currentResultNum")!).toString()),
                   searchResult[num]);
-            }
-            else {
-              await Prefs.remove((num + Prefs.getInt("currentResultNum")!).toString());
+            } else {
+              await Prefs.remove(
+                  (num + Prefs.getInt("currentResultNum")!).toString());
             }
           },
           icon: Icon(
