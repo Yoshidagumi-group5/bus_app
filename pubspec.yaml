@@ -46,6 +46,7 @@ dependencies:
   timezone: ^0.9.2
   haptic_feedback: ^0.4.2
   nfc_manager: ^3.3.0
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

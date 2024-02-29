@@ -116,7 +116,7 @@ class HomePage extends ConsumerWidget {
                     /** feature/searchResultとマージしたときにコメント外す */
                     Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const SearchResult()),
+                    MaterialPageRoute(builder: (context) => SearchResult()),
                     );
                   },
                   style: ElevatedButton.styleFrom(

@@ -1,5 +1,6 @@
 import 'package:bus_app/pages/bus_registration/bus_registration.dart';
 import 'package:bus_app/pages/home_page.dart';
+import 'package:bus_app/pages/SearchResult.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -7,6 +8,7 @@ import 'pages/okica.dart';
 import 'pages/readOkica.dart';
 
 Future<void> main() async {
+  await Prefs.init();
   runApp(const ProviderScope(child: MyApp()));
 }
 
