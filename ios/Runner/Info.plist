@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Privacy - NFC Scan Usage Description</key>
+	<key>NFCReaderUsageDescription</key>
 	<string>OKICAの読み取りに使用します</string>
 	<key>ISO18092 system codes for NFC Tag Reader Session</key>
 	<array>
