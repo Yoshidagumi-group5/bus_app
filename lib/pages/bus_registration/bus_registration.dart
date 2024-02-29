@@ -82,25 +82,7 @@ final routeWidgetProvider = StateProvider<Widget>(
   ),
 );
 
-const List<Widget> options = <Widget>[
-  Text('アラーム', style: TextStyle(fontSize: 16)),
-  Text('マップ', style: TextStyle(fontSize: 16))
-];
 
-// Toggleのアラームとマップのどっちを選択しているかの状態を管理
-final optionProvider = StateProvider<List<bool>>(
-  (ref) => <bool>[true, false],
-);
-
-// 各ルートでアラームとマップのどっちを表示させるかの状態を管理
-final optionWidgetProvider = StateProvider<Widget>(
-  (ref) => Alarm(
-    busStops: routes[0],
-    busStopAlarmProvider: busStopAlarmProviders[0],
-    busArrivalAlarmProvider: busArrivalAlarmProviders[0],
-    wakeUpAlarmProvider: wakeUpAlarmProviders[0],
-  ),
-);
 
 // バス登録ページのWidget
 class BusRegistration extends ConsumerStatefulWidget {
@@ -156,6 +138,21 @@ class _BusRegistrationState extends ConsumerState<BusRegistration> {
   }
 }
 
+// Toggleのアラームとマップのどっちを選択しているかの状態を管理
+final optionProvider = StateProvider<List<bool>>(
+  (ref) => <bool>[true, false],
+);
+
+// 各ルートでアラームとマップのどっちを表示させるかの状態を管理
+final optionWidgetProvider = StateProvider<Widget>(
+  (ref) => Alarm(
+    busStops: routes[0],
+    busStopAlarmProvider: busStopAlarmProviders[0],
+    busArrivalAlarmProvider: busArrivalAlarmProviders[0],
+    wakeUpAlarmProvider: wakeUpAlarmProviders[0],
+  ),
+);
+
 class YesRoute extends ConsumerWidget {
   const YesRoute({super.key, required this.wakeUpAlarmProvider});
 
@@ -174,10 +171,6 @@ class YesRoute extends ConsumerWidget {
           wakeUpAlarmProvider: wakeUpAlarmProviders[i]
         )
       }
-    ];
-
-    final wakeUpAlarms = [
-      for (int i = 0; i < wakeUpAlarmProviders.length; i++) ref.watch(wakeUpAlarmProviders[i])
     ];
 
     final route = ref.watch(routeToggleProvider);
@@ -199,8 +192,6 @@ class YesRoute extends ConsumerWidget {
                           List.generate(route.length, (i) => i == index);
                       ref.read(routeWidgetProvider.notifier).state = routeWidgets[index];
 
-                      ref.read(wakeUpAlarmProviders[index].notifier).state = false;
-                            
                       // ルートを切り替える時、optionWidgetはアラームを表示させる
                       ref.read(optionProvider.notifier).state = [true, false];
                       ref.read(optionWidgetProvider.notifier).state = 
@@ -258,6 +249,12 @@ class NoRoute extends ConsumerWidget {
     );
   }
 }
+
+
+const List<Widget> options = <Widget>[
+  Text('アラーム', style: TextStyle(fontSize: 16)),
+  Text('マップ', style: TextStyle(fontSize: 16))
+];
 
 // 各ルートを表示するためのウィジェット
 class Route extends ConsumerWidget {
