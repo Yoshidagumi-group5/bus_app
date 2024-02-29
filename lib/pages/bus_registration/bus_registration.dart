@@ -18,17 +18,31 @@ class SearchResult extends StatelessWidget {
 
 // バスのルート(仮)
 const List<List<String>> routes = [
-  ['東風平中学校前', '東風平', '伊覇公民館前', 'あああ', 'いいい', 'ううう', 'えええ', 'おおお'],
-  ['豊原', '辺野古', '沖縄高専入口', 'かかか', 'ききき', 'くくく', 'けけけ', 'こここ'],
-  ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
-  ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
-  ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
-  ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
+  // ['東風平中学校前', '東風平', '伊覇公民館前', 'あああ', 'いいい', 'ううう', 'えええ', 'おおお'],
+  // ['豊原', '辺野古', '沖縄高専入口', 'かかか', 'ききき', 'くくく', 'けけけ', 'こここ'],
+  // ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
+  // ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
+  // ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
+  // ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
 ];
 
-final pageWidgetProvider = StateProvider<Widget>(
-  (ref) => NoRoute()
+
+enum WidgetType {
+  noRoute,
+  yesRoute
+}
+
+class PageWidgetNotifier extends Notifier<WidgetType> {
+  @override
+  build() {
+    return routes.length == 0 ? WidgetType.noRoute : WidgetType.yesRoute;
+  }
+}
+
+final pageWidgetProvider = NotifierProvider<PageWidgetNotifier, WidgetType>(
+  PageWidgetNotifier.new,
 );
+
 
 // 各ルートのバス到着アラーム
 final List<StateProvider<bool>> busArrivalAlarmProviders = [
@@ -88,18 +102,34 @@ final optionWidgetProvider = StateProvider<Widget>(
   ),
 );
 
-
 // バス登録ページのWidget
-class BusRegistration extends ConsumerWidget {
+class BusRegistration extends ConsumerStatefulWidget {
   const BusRegistration({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<BusRegistration> createState() => _BusRegistrationState();
+}
 
-    final pageWidget = ref.watch(pageWidgetProvider);
-    ref.read(pageWidgetProvider.notifier).state = 
-        routes.length == 0 ? NoRoute() : YesRoute();
+class _BusRegistrationState extends ConsumerState<BusRegistration> {
 
+  Widget pageWidget = NoRoute();
+
+  @override
+  void initState() {
+    super.initState();
+
+    switch (routes.length == 0 ? WidgetType.noRoute : WidgetType.yesRoute) {
+      case WidgetType.noRoute:
+        pageWidget = NoRoute();
+        break;
+      case WidgetType.yesRoute:
+        pageWidget = YesRoute();
+        break;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {    
     return Scaffold(
       backgroundColor: const Color(0xFFFFE8AE),
       appBar: AppBar(
@@ -133,13 +163,12 @@ class YesRoute extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
 
     final List<Widget> routeWidgets = <Widget>[
-      const NoRoute(),
-      for (int i = 1; i < routes.length; i++) Route(
-        routeNo: 'ルート${i}',
-        busStops: routes[i - 1],
-        busStopAlarmProvider: busStopAlarmProviders[i - 1],
-        busArrivalAlarmProvider: busArrivalAlarmProviders[i - 1],
-        wakeUpAlarmProvider: wakeUpAlarmProviders[i - 1]
+      for (int i = 0; i < routes.length; i++) Route(
+        routeNo: 'ルート$i',
+        busStops: routes[i],
+        busStopAlarmProvider: busStopAlarmProviders[i],
+        busArrivalAlarmProvider: busArrivalAlarmProviders[i],
+        wakeUpAlarmProvider: wakeUpAlarmProviders[i]
       )
     ];    
 
