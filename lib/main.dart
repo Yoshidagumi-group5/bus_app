@@ -8,6 +8,7 @@ import 'pages/okica.dart';
 import 'pages/readOkica.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Prefs.init();
   runApp(const ProviderScope(child: MyApp()));
 }

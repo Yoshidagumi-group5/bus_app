@@ -91,9 +91,9 @@ class _SearchResultState extends State<SearchResult> {
   @override
   void initState() {
     super.initState();
-    setState() {
+    setState(() {
       resultNumCounter += searchResult.length;
-    }
+    });
 
     Prefs.setInt("currentResultNum", resultNumCounter);
   }
