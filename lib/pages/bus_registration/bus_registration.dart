@@ -23,7 +23,7 @@ late List<List<String>> busInformation;  // 各バスの情報を保存
 // バスのルート(仮)
 const List<List<String>> routes = [
   ['東風平中学校前', '東風平', '伊覇公民館前', 'あああ', 'いいい', 'ううう', 'えええ', 'おおお'],
-  // ['豊原', '辺野古', '沖縄高専入口', 'かかか', 'ききき', 'くくく', 'けけけ', 'こここ'],
+  ['豊原', '辺野古', '沖縄高専入口', 'かかか', 'ききき', 'くくく', 'けけけ', 'こここ'],
   // ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
   // ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
   // ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
@@ -300,12 +300,12 @@ class Route extends ConsumerWidget {
 
 
   /** routeMapができあがったらrouteNoは消す */
-  final String routeNo;         // ルート番号
-  final List<String> busStops;  // バスのルート(バス停のリスト)
+  final String routeNo;                                 // ルート番号
+  final List<String> busStops;                          // バスのルート(バス停のリスト)
   final List<StateProvider<bool>> busStopAlarmProvider; // 各バス停の寝落ち防止アラームのon/off
   final StateProvider<bool> busArrivalAlarmProvider;    // 各ルートのバス到着アラーム
   final StateProvider<bool> wakeUpAlarmProvider;        // 各ルートの寝落ち防止アラーム(全体)
-  final List<String> busInfo;
+  final List<String> busInfo;                           // バスの情報
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -336,8 +336,8 @@ class Route extends ConsumerWidget {
                 border: Border.all(color: const Color(0xFFE2A5A4), width: 2),
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
               ),
-              // child: const SearchResultClass(0, '77', '500', '30', '14:30', '15:30', '沖縄高専入口', '那覇バスターミナル'),   // SearchResult(仮)
-              child: SearchResult(text: Text('検索結果')),
+              child: SearchResultClass(0, busInfo),
+              // child: SearchResult(text: Text('検索結果')),  // SearchResult(仮)
             ),
           ),
           Padding(
