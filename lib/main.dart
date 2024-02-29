@@ -59,7 +59,7 @@ class MainPage extends ConsumerWidget {
         break;
 
       case PageType.readOkica:
-        bodyWidget = ReadOkica();
+        bodyWidget = TagReadPage();
         break;
     }
 
@@ -69,14 +69,6 @@ class MainPage extends ConsumerWidget {
         type: BottomNavigationBarType.fixed,
         currentIndex: PageType.values.indexOf(currentPage),
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.expand),
-            label: 'Example',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.expand_circle_down),
-            label: 'Example2',
-          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.expand_circle_down),
             label: 'okica',

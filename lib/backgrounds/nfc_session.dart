@@ -8,13 +8,14 @@ Future<void> startSession({
   required Future<String?> Function(NfcTag) handleTag,
   String alertMessage = 'OKICAをスマートフォンにかざしてください',
 }) async {
-  if (!(await NfcManager.instance.isAvailable()))
+  if (!(await NfcManager.instance.isAvailable())) {
     return showDialog(
       context: context,
       builder: (context) => _UnavailableDialog(),
     );
+  }
 
-  if (Platform.isIOS)
+  if (Platform.isIOS) {
     return NfcManager.instance.startSession(
       alertMessage: alertMessage,
       onDiscovered: (tag) async {
@@ -27,6 +28,7 @@ Future<void> startSession({
         }
       },
     );
+  }
 
   throw ('unsupported platform: ${Platform.operatingSystem}');
 }
@@ -35,11 +37,11 @@ class _UnavailableDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('エラー'),
-      content: Text('お使いの端末がNFC機能に対応していない、またはNFC機能を有効にしていません'),
+      title: const Text('エラー'),
+      content: const Text('お使いの端末がNFC機能に対応していない、またはNFC機能を有効にしていません'),
       actions: [
         TextButton(
-          child: Text('閉じる'),
+          child: const Text('閉じる'),
           onPressed: () => Navigator.pop(context),
         ),
       ],
