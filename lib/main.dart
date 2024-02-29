@@ -1,4 +1,4 @@
-import 'package:bus_app/pages/bus_registration.dart';
+import 'package:bus_app/pages/bus_registration/bus_registration.dart';
 import 'package:bus_app/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -77,10 +77,10 @@ class MainPage extends ConsumerWidget {
     return Scaffold(
       body: bodyWidget,
       bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white,
         backgroundColor: Color(0xFFBD2B2A),
+        type: BottomNavigationBarType.fixed,
         currentIndex: PageType.values.indexOf(currentPage),
         items: const [
           BottomNavigationBarItem(

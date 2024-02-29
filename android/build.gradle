@@ -18,12 +18,12 @@ tasks.register("clean", Delete) {
 }
 
 /** 追加した Flutterで毎朝8時に飛ぶローカル通知を実装する【OB-1アプデ】(https://zenn.dev/flutteruniv_dev/articles/434310831e41f3)*/
-// buildscript {
-//     repositories {
-//         google()
-//         jcenter()
-//     }
-//     dependencies {
-//         classpath 'com.android.tools.build:gradle:4.2.2'
-//     }
-// }
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.2.2'
+    }
+}
