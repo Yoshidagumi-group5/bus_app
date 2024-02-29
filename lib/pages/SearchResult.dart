@@ -1,8 +1,3 @@
-// import 'dart:html';
-// import 'dart:math';
-
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -96,9 +91,9 @@ class _SearchResultState extends State<SearchResult> {
   @override
   void initState() {
     super.initState();
-    setState() {
+    setState(() {
       resultNumCounter += searchResult.length;
-    }
+    });
 
     Prefs.setInt("currentResultNum", resultNumCounter);
   }
@@ -119,16 +114,6 @@ class _SearchResultState extends State<SearchResult> {
           "検索結果の一覧",
           style: TextStyle(fontSize: 20, color: Color(0xFFFFFFFF)),
         ),
-        // actions: const [
-        //   Padding(
-        //     padding: EdgeInsets.only(right: 16.0),
-        //     child: Icon(
-        //       Icons.star,
-        //       size: 30,
-        //       color: Colors.white,
-        //     ),
-        //   )
-        // ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -487,18 +472,19 @@ class BusRegisterationButton extends ConsumerWidget {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(
-          //border: Border.all(color: const Color(0xFFE2A5A4)),
           borderRadius: BorderRadius.circular(10),
           color: color ? Colors.red : Colors.white,
         ),
         child: IconButton(
           onPressed: () async {
             ref.read(providers.notifier).state = !color;
-            if (ref.read(providers.notifier).state == !color) {
+            if (ref.read(providers.notifier).state) {
               await Prefs.setStringList(
                   ((num + Prefs.getInt("currentResultNum")!).toString()),
                   searchResult[num]);
-              print(ref.read(providers.notifier).state ? "登録" : "解除");
+            }
+            else {
+              await Prefs.remove((num + Prefs.getInt("currentResultNum")!).toString());
             }
           },
           icon: Icon(
