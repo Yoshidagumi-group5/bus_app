@@ -318,7 +318,7 @@ class _AlarmState extends ConsumerState<Alarm> {
               onChanged: (value) {
                 ref.read(widget.wakeUpAlarmProvider.notifier).state = value;
                 ref.read(wakeUpAlarmWidgetProvider.notifier).state = wakeUpAlarmWidgets[value ? 1 : 0];
-            
+                
                 if (value) {
                   for (int i = 0; i < widget.busStops.length; i++) {
                     if (busStopAlarms[i]) {
