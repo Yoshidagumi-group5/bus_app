@@ -24,7 +24,7 @@ class NFCReadPage extends StatefulWidget {
 }
 
 class _NFCReadPage extends State<NFCReadPage> {
-  String msg = "";
+  String msg = "plane";
 
   void changeMsg(String message) {
     setState(() {
@@ -36,7 +36,7 @@ class _NFCReadPage extends State<NFCReadPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('NFC Reader'),
+        title: Text(msg),
       ),
       body: Center(
         child: Column(
