@@ -37,9 +37,11 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_riverpod: ^2.4.9
   hooks_riverpod: ^2.4.9
-  flutter_hooks: ^0.20.4
+  flutter_hooks: ^0.20.5
   fl_chart: ^0.66.1
   table_calendar: ^3.1.0
+  google_maps_flutter: ^2.5.3
+  geolocator: ^11.0.0
 
 dev_dependencies:
   flutter_test:

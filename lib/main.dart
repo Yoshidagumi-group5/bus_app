@@ -2,6 +2,7 @@ import 'package:bus_app/pages/example.dart';
 import 'package:bus_app/pages/example2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:bus_app/pages/google_map_from_navi.dart';
 
 Future<void> main() async {
   runApp(const ProviderScope(child: MyApp()));
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
 enum PageType {
   example1,
   example2,
+  maps,
 }
 
 class BottomNavigationNotifier extends Notifier<PageType> {
@@ -59,11 +61,13 @@ class MainPage extends ConsumerWidget {
       case PageType.example2:
         bodyWidget = const ExamplePage2();
         break;
+      case PageType.maps:
+        bodyWidget = GoogleMapsNavi();
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Center(child: Text("Green House Application")),
+        title: const Center(child: Text("Bus App")),
       ),
       body: bodyWidget,
       bottomNavigationBar: BottomNavigationBar(
@@ -77,6 +81,7 @@ class MainPage extends ConsumerWidget {
             icon: Icon(Icons.expand_circle_down),
             label: 'Example2',
           ),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: "Maps")
         ],
         onTap: (index) {
           final pageType = PageType.values[index];
