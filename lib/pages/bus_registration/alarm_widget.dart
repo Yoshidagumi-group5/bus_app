@@ -220,7 +220,6 @@ class _AlarmState extends ConsumerState<Alarm> {
                   onChanged: (bool value) async {
                     ref.read(widget.busArrivalAlarmProvider.notifier).state = value;
                     if (value) {
-                      // await alarm.start(3);
                       /** バックエンドからもらった値を入れる */
                       scheduleNotification(
                         id: 0,
@@ -228,40 +227,41 @@ class _AlarmState extends ConsumerState<Alarm> {
                         body: 'バス停に向かいましょう',
                         hours: 0,
                         minutes: 0,
-                        seconds: 5,
+                        seconds: 3,
                       );
                       
+                      // アラーム(音)
+                      await alarm.start(3 + 2);
                       setState(() {
                         HapticFeedback.mediumImpact();  // バイブレーション
                       });
-
                       /** バイブレーションのもう一つのパターン */
                       // Vibration.vibrate();
                       // if (await Vibration.hasVibrator() ?? false) {
                       //   Vibration.vibrate();
                       // }
 
-                      // if (context.mounted) {
-                      //   showDialog(
-                      //     context: context,
-                      //     builder: (context) {
-                      //       return AlertDialog(
-                      //         title: const Text("あと${5}分"),
-                      //         content: const Text("バス到着まであと${5}分です"),
-                      //         actions: [
-                      //           ElevatedButton(
-                      //             onPressed: () {
-                      //               alarm.stop();
-                      //               Vibration.cancel();
-                      //               Navigator.pop(context);
-                      //             },
-                      //             child: const Text('ストップ'),
-                      //           ),
-                      //         ],
-                      //       );
-                      //     }
-                      //   );
-                      // }
+                      if (context.mounted) {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text("あと${5}分"),
+                              content: const Text("バス到着まであと${5}分です"),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    alarm.stop();
+                                    Vibration.cancel();
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('ストップ'),
+                                ),
+                              ],
+                            );
+                          }
+                        );
+                      }
                     }
                     else {
                       cancelNotification(0);
@@ -318,7 +318,7 @@ class _AlarmState extends ConsumerState<Alarm> {
               onChanged: (value) {
                 ref.read(widget.wakeUpAlarmProvider.notifier).state = value;
                 ref.read(wakeUpAlarmWidgetProvider.notifier).state = wakeUpAlarmWidgets[value ? 1 : 0];
-            
+                
                 if (value) {
                   for (int i = 0; i < widget.busStops.length; i++) {
                     if (busStopAlarms[i]) {
