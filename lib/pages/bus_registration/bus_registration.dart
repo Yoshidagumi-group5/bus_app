@@ -6,25 +6,28 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // SearchResult(仮)
-// class SearchResult extends StatelessWidget {
-//   const SearchResult({super.key, required this.text});
+class SearchResult extends StatelessWidget {
+  const SearchResult({super.key, required this.text});
 
-//   final Widget text;
+  final Widget text;
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Center(child: text);
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: text);
+  }
+}
+
+List<String> busKeys = [];              // バスを区別するためのキーを保存
+late List<List<String>> busInformation;  // 各バスの情報を保存
 
 // バスのルート(仮)
 const List<List<String>> routes = [
   ['東風平中学校前', '東風平', '伊覇公民館前', 'あああ', 'いいい', 'ううう', 'えええ', 'おおお'],
-  ['豊原', '辺野古', '沖縄高専入口', 'かかか', 'ききき', 'くくく', 'けけけ', 'こここ'],
-  ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
-  ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
-  ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
-  ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
+  // ['豊原', '辺野古', '沖縄高専入口', 'かかか', 'ききき', 'くくく', 'けけけ', 'こここ'],
+  // ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
+  // ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
+  // ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
+  // ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
 ];
 
 
@@ -36,7 +39,7 @@ enum WidgetType {
 class PageWidgetNotifier extends Notifier<WidgetType> {
   @override
   build() {
-    return routes.isEmpty ? WidgetType.noRoute : WidgetType.yesRoute;
+    return busKeys.isEmpty ? WidgetType.noRoute : WidgetType.yesRoute;
   }
 }
 
@@ -47,18 +50,21 @@ final pageWidgetProvider = NotifierProvider<PageWidgetNotifier, WidgetType>(
 
 // 各ルートのバス到着アラーム
 final List<StateProvider<bool>> busArrivalAlarmProviders = [
-  for (int i = 0; i < routes.length; i++) StateProvider((ref) => false)
+  for (int i = 0; i < busKeys.length; i++) StateProvider((ref) => false)
 ];
 
 // 各ルートの寝落ち防止アラーム(全体)
 final List<StateProvider<bool>> wakeUpAlarmProviders = [
-  for (int i = 0; i < routes.length; i++) StateProvider((ref) => false)
+  for (int i = 0; i < busKeys.length; i++) StateProvider((ref) => false)
 ];
 
 // 各ルートの各バス停での寝落ち防止アラーム
 final List<List<StateProvider<bool>>> busStopAlarmProviders = [
-  for (int i = 0; i < routes.length; i++) ... {[
+  for (int i = 0; i < busKeys.length; i++) ... {[
+
+    // supabaseから値取ってくる
     for (int j = 0; j < routes[i].length; j++) StateProvider<bool>((ref) => false),
+
   ]},
 ];
 
@@ -66,7 +72,7 @@ final List<List<StateProvider<bool>>> busStopAlarmProviders = [
 final routeToggleProvider = StateProvider<List<bool>>(  
   (ref) {
     final boolList = [true];
-    for (int i = 1; i < routes.length; i++) {
+    for (int i = 1; i < busKeys.length; i++) {
       boolList.add(false);
     }
     return boolList;
@@ -76,13 +82,13 @@ final routeToggleProvider = StateProvider<List<bool>>(
 final routeWidgetProvider = StateProvider<Widget>(
   (ref) => Route(
     routeNo: 'ルート${1}',
-    busStops: routes[0],
+    busStops: routes[0],  // supabaseから値取ってくる
     busStopAlarmProvider: busStopAlarmProviders[0],
     busArrivalAlarmProvider: busArrivalAlarmProviders[0],
-    wakeUpAlarmProvider: wakeUpAlarmProviders[0]
+    wakeUpAlarmProvider: wakeUpAlarmProviders[0],
+    busInfo: busInformation[0],
   ),
 );
-
 
 
 // バス登録ページのWidget
@@ -101,7 +107,7 @@ class _BusRegistrationState extends ConsumerState<BusRegistration> {
   void initState() {
     super.initState();
 
-    switch (routes.length == 0 ? WidgetType.noRoute : WidgetType.yesRoute) {
+    switch (busKeys.length == 0 ? WidgetType.noRoute : WidgetType.yesRoute) {
       case WidgetType.noRoute:
         pageWidget = const NoRoute();
         break;
@@ -110,7 +116,14 @@ class _BusRegistrationState extends ConsumerState<BusRegistration> {
         break;
     }
 
-    
+    busKeys = Prefs.getStringList('busKeys')!;
+    busInformation = [
+      for (int i = 0; i < Prefs.getStringList('busKeys')!.length; i++) ... {
+        Prefs.getStringList(busKeys[i])!,
+      }
+    ];
+    print(busInformation);
+
   }
 
   @override
@@ -159,7 +172,10 @@ final optionProvider = StateProvider<List<bool>>(
 // 各ルートでアラームとマップのどっちを表示させるかの状態を管理
 final optionWidgetProvider = StateProvider<Widget>(
   (ref) => Alarm(
+
+    // supabaseから値取ってくる
     busStops: routes[0],
+
     busStopAlarmProvider: busStopAlarmProviders[0],
     busArrivalAlarmProvider: busArrivalAlarmProviders[0],
     wakeUpAlarmProvider: wakeUpAlarmProviders[0],
@@ -175,13 +191,14 @@ class YesRoute extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
 
     final List<Widget> routeWidgets = <Widget>[
-      for (int i = 0; i < routes.length; i++) ... {
+      for (int i = 0; i < busKeys.length; i++) ... {
         Route(
           routeNo: 'ルート$i',
-          busStops: routes[i],
+          busStops: routes[i],  // supabaseから値取ってくる
           busStopAlarmProvider: busStopAlarmProviders[i],
           busArrivalAlarmProvider: busArrivalAlarmProviders[i],
-          wakeUpAlarmProvider: wakeUpAlarmProviders[i]
+          wakeUpAlarmProvider: wakeUpAlarmProviders[i],
+          busInfo: busInformation[i],
         )
       }
     ];
@@ -209,7 +226,7 @@ class YesRoute extends ConsumerWidget {
                       ref.read(optionProvider.notifier).state = [true, false];
                       ref.read(optionWidgetProvider.notifier).state = 
                           Alarm(
-                            busStops: routes[index],
+                            busStops: routes[index],  // supabaseから値取ってくる
                             busStopAlarmProvider: busStopAlarmProviders[index],
                             busArrivalAlarmProvider: busArrivalAlarmProviders[index],
                             wakeUpAlarmProvider: wakeUpAlarmProviders[index],
@@ -227,7 +244,7 @@ class YesRoute extends ConsumerWidget {
                       minWidth: 80.0,
                     ),
                     isSelected: route,
-                    children: routes.asMap().entries.map((entry) => Text('ルート${entry.key + 1}', style: const TextStyle(fontSize: 16))).toList(),
+                    children: busKeys.asMap().entries.map((entry) => Text('ルート${entry.key + 1}', style: const TextStyle(fontSize: 16))).toList(),
                   );
                 }
               ),
@@ -277,7 +294,8 @@ class Route extends ConsumerWidget {
     required this.busStops,
     required this.busStopAlarmProvider,
     required this.busArrivalAlarmProvider,
-    required this.wakeUpAlarmProvider
+    required this.wakeUpAlarmProvider,
+    required this.busInfo,
   });
 
 
@@ -287,6 +305,7 @@ class Route extends ConsumerWidget {
   final List<StateProvider<bool>> busStopAlarmProvider; // 各バス停の寝落ち防止アラームのon/off
   final StateProvider<bool> busArrivalAlarmProvider;    // 各ルートのバス到着アラーム
   final StateProvider<bool> wakeUpAlarmProvider;        // 各ルートの寝落ち防止アラーム(全体)
+  final List<String> busInfo;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -317,7 +336,8 @@ class Route extends ConsumerWidget {
                 border: Border.all(color: const Color(0xFFE2A5A4), width: 2),
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
               ),
-              child: const SearchResultClass(0, '77', '500', '30', '14:30', '15:30', '沖縄高専入口', '那覇バスターミナル'),   // SearchResult(仮)
+              // child: const SearchResultClass(0, '77', '500', '30', '14:30', '15:30', '沖縄高専入口', '那覇バスターミナル'),   // SearchResult(仮)
+              child: SearchResult(text: Text('検索結果')),
             ),
           ),
           Padding(
