@@ -1,7 +1,4 @@
 //import 'dart:html';
-
-import 'package:bus_app/pages/example.dart';
-import 'package:bus_app/pages/example2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'pages/okica.dart';
@@ -29,8 +26,6 @@ class MyApp extends StatelessWidget {
 
 // page追加時にはここに追加
 enum PageType {
-  example1,
-  example2,
   okica,
   readOkica,
 }
@@ -38,7 +33,7 @@ enum PageType {
 class BottomNavigationNotifier extends Notifier<PageType> {
   @override
   build() {
-    return PageType.example1;
+    return PageType.okica;
   }
 
   void changePage(PageType pageType) {
@@ -59,13 +54,6 @@ class MainPage extends ConsumerWidget {
 
     Widget bodyWidget;
     switch (currentPage) {
-      case PageType.example1:
-        bodyWidget = const ExamplePage1();
-        break;
-      case PageType.example2:
-        bodyWidget = const ExamplePage2();
-        break;
-
       case PageType.okica:
         bodyWidget = const Okica();
         break;
