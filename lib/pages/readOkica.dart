@@ -88,9 +88,7 @@ class MyAppState extends State<ReadOkica> {
         alertMessage: "Please touch Suica",
         onDiscovered: (tag) async {
           try {
-            if (Platform.isIOS)
-              await onDiscoveredForIos(tag);
-            else if (Platform.isAndroid) await onDiscoveredForAndroid(tag);
+            await onDiscoveredForIos(tag);
           } catch (e) {
             msg('Error\n${e.toString()}');
             NfcManager.instance
@@ -171,123 +169,6 @@ class MyAppState extends State<ReadOkica> {
     msg(s);
 
     NfcManager.instance.stopSession(alertMessage: 'Succeeded');
-  }
-
-  /// アンドロイド向け
-  Future onDiscoveredForAndroid(NfcTag tag) async {
-    final nfcf = NfcF.from(tag);
-    if (nfcf == null) {
-      msg('Unsupported card for NFC type F');
-      return;
-    }
-    Uint8List IDm = nfcf.identifier;
-
-    // 属性情報(008B)から残高を取得
-    final list = [0x80, 0];
-    List<List<int>> res = await _readWithoutEncryption(
-        nfcf: nfcf,
-        IDm: IDm,
-        serviceCode: [0x8b, 0x00],
-        blockCount: 1,
-        blockList: list);
-
-    // 残高[11][12]
-    int balance = -1;
-    if (res.length > 0) balance = res[0][12] * 256 + res[0][11];
-
-    // 利用履歴(090F)から履歴20件を取得 ※一度に12件まで
-    List<int> list1 = [];
-    for (int i = 0; i < 12; i++) list1.addAll([0x80, i]);
-    List<List<int>> res1 = await _readWithoutEncryption(
-        nfcf: nfcf,
-        IDm: IDm,
-        serviceCode: [0x0f, 0x09],
-        blockCount: 12,
-        blockList: list1);
-
-    List<int> list2 = [];
-    for (int i = 12; i < 20; i++) list2.addAll([0x80, i]);
-    List<List<int>> res2 = await _readWithoutEncryption(
-        nfcf: nfcf,
-        IDm: IDm,
-        serviceCode: [0x0f, 0x09],
-        blockCount: 8,
-        blockList: list2);
-    List<List<int>> blocklist = [...res1, ...res2];
-
-    String histories = '';
-    for (List<int> b in blocklist) {
-      // 年月日[4][5](7bit 4bit 5bit)
-      int idate = b[4] * 256 + b[5];
-      String y = ((idate & 0xFE00) >> 9).toString();
-      String m = ((idate & 0x01E0) >> 5).toString().padLeft(2, '0');
-      String d = ((idate & 0x001F) >> 0).toString().padLeft(2, '0');
-      histories += '${y}-${m}-${d}';
-      // 残高[10][11]
-      histories +=
-          '  ' + (b[11] * 256 + b[10]).toString().padLeft(5, ' ') + ' yen';
-      histories += '\n';
-    }
-
-    String s = '';
-    s += 'IDm ${intlist_to_string(nfcf.identifier)}\n';
-    s += 'SystemCode ${intlist_to_string(nfcf.systemCode)}\n';
-    s += 'Balance ${balance} yen\n';
-    s += histories;
-    msg(s);
-  }
-
-  /// コマンド Read Without Encryption (0x06) の送受信
-  /// - nfcf Android 向け
-  /// - IDm 固有ID 8バイト
-  /// - serviceCode 属性情報(008B) 利用履歴(090F)
-  /// - blockCount 受信ブロック数
-  /// - blockList 受信ブロック
-  /// - 戻り値 16バイトのリスト
-  Future<List<List<int>>> _readWithoutEncryption(
-      {required NfcF nfcf,
-      required List<int> IDm,
-      required List<int> serviceCode,
-      required int blockCount,
-      required List<int> blockList}) async {
-    List<int> cmd = [];
-    cmd.add(0x00); // コマンド長（後で）
-    cmd.add(0x06); // コマンドコード 06 Read Without Encryption
-    cmd.addAll(IDm); // IDm (8byte)
-    cmd.add(0x01); // サービス数
-    cmd.addAll(serviceCode); // サービスコード
-    cmd.add(blockCount); // 受信ブロックの数
-    cmd.addAll(blockList); // 受信ブロック
-    cmd[0] = cmd.length; // コマンド長
-
-    List<List<int>> blist = [];
-    try {
-      Uint8List res = await nfcf.transceive(data: Uint8List.fromList(cmd));
-
-      // 応答データから16バイトのブロックリストを取得
-      // [10] 0x00が成功
-      // [12] 16バイトのブロックの数
-      // [13] 以降16バイトのブロックが続く
-      if (res.length >= 11 && res[10] == 0x00) {
-        int nblock = res[12];
-        for (var i = 0; i < nblock; i++) {
-          List<int> b = [];
-          for (int j = 0; j < 16; j++) {
-            int k = 13 + (16 * i) + j;
-            if (res.length > k) b.add(res[k]);
-          }
-          blist.add(b);
-          print(intlist_to_string(b));
-        }
-      } else {
-        print('faild res.length ${res.length}');
-        if (res.length > 10) print('faild res[10] ${res[10]} (OK=0x00)');
-      }
-    } catch (e) {
-      msg('Error:${e.toString()}');
-      return blist;
-    }
-    return blist;
   }
 
   /// Uint8Listを16進数の文字列に変換（デバッグ用）
