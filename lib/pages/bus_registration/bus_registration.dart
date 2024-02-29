@@ -1,29 +1,30 @@
 import 'package:bus_app/pages/bus_registration/alarm_widget.dart';
 import 'package:bus_app/pages/bus_registration/map_widget_test.dart';
+import 'package:bus_app/pages/SearchResult.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // SearchResult(仮)
-class SearchResult extends StatelessWidget {
-  const SearchResult({super.key, required this.text});
+// class SearchResult extends StatelessWidget {
+//   const SearchResult({super.key, required this.text});
 
-  final Widget text;
+//   final Widget text;
 
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: text);
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Center(child: text);
+//   }
+// }
 
 // バスのルート(仮)
 const List<List<String>> routes = [
   ['東風平中学校前', '東風平', '伊覇公民館前', 'あああ', 'いいい', 'ううう', 'えええ', 'おおお'],
   ['豊原', '辺野古', '沖縄高専入口', 'かかか', 'ききき', 'くくく', 'けけけ', 'こここ'],
-  // ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
-  // ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
-  // ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
-  // ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
+  ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
+  ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
+  ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
+  ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
 ];
 
 
@@ -35,7 +36,7 @@ enum WidgetType {
 class PageWidgetNotifier extends Notifier<WidgetType> {
   @override
   build() {
-    return routes.length == 0 ? WidgetType.noRoute : WidgetType.yesRoute;
+    return routes.isEmpty ? WidgetType.noRoute : WidgetType.yesRoute;
   }
 }
 
@@ -94,7 +95,7 @@ class BusRegistration extends ConsumerStatefulWidget {
 
 class _BusRegistrationState extends ConsumerState<BusRegistration> {
 
-  Widget pageWidget = NoRoute();
+  Widget pageWidget = const NoRoute();
 
   @override
   void initState() {
@@ -102,12 +103,14 @@ class _BusRegistrationState extends ConsumerState<BusRegistration> {
 
     switch (routes.length == 0 ? WidgetType.noRoute : WidgetType.yesRoute) {
       case WidgetType.noRoute:
-        pageWidget = NoRoute();
+        pageWidget = const NoRoute();
         break;
       case WidgetType.yesRoute:
         pageWidget = YesRoute(wakeUpAlarmProvider: wakeUpAlarmProviders[0]);
         break;
     }
+
+    
   }
 
   @override
@@ -126,12 +129,22 @@ class _BusRegistrationState extends ConsumerState<BusRegistration> {
         ),
         backgroundColor: const Color(0xFFBD2B2B),
       ),
-      body: Stack(
+      body: Column(
         children: [
-          Positioned.fill(
-            child: Image.asset('assets/images/shisa_touka_trimming.png', fit: BoxFit.cover),
+          ElevatedButton(
+            onPressed: () {
+              
+            },
+            child: const Text('テスト'),
           ),
-          pageWidget,
+          Stack(
+            children: [
+              Positioned.fill(
+                child: Image.asset('assets/images/shisa_touka_trimming.png', fit: BoxFit.cover),
+              ),
+              pageWidget,
+            ],
+          ),
         ],
       ),
     );
@@ -304,7 +317,7 @@ class Route extends ConsumerWidget {
                 border: Border.all(color: const Color(0xFFE2A5A4), width: 2),
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
               ),
-              child: const SearchResult(text: Text('検索結果')),  // SearchResult(仮)
+              child: const SearchResultClass(0, '77', '500', '30', '14:30', '15:30', '沖縄高専入口', '那覇バスターミナル'),   // SearchResult(仮)
             ),
           ),
           Padding(

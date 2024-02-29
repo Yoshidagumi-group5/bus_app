@@ -96,11 +96,14 @@ class _SearchResultState extends State<SearchResult> {
     });
 
     Prefs.setInt("currentResultNum", resultNumCounter);
+    // バスキーのリストの初期化
+    Prefs.setStringList('busKeys', []);
   }
 
   void showSharedPreference() {
     final keys = Prefs.getKeys();
     print(keys);
+    print(Prefs.getStringList('busKeys'));
   }
 
   @override
@@ -478,13 +481,22 @@ class BusRegisterationButton extends ConsumerWidget {
         child: IconButton(
           onPressed: () async {
             ref.read(providers.notifier).state = !color;
+
+            final List<String> busKeys;
             if (ref.read(providers.notifier).state) {
               await Prefs.setStringList(
                   ((num + Prefs.getInt("currentResultNum")!).toString()),
                   searchResult[num]);
+
+              busKeys = Prefs.getStringList('busKeys')!;
+              busKeys.add((num + Prefs.getInt("currentResultNum")!).toString());
+              await Prefs.setStringList('busKeys', busKeys);
             }
             else {
               await Prefs.remove((num + Prefs.getInt("currentResultNum")!).toString());
+              busKeys = Prefs.getStringList('busKeys')!;
+              busKeys.remove((num + Prefs.getInt("currentResultNum")!).toString());
+              await Prefs.setStringList('busKeys', busKeys);
             }
           },
           icon: Icon(
