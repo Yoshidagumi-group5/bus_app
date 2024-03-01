@@ -41,50 +41,51 @@ class TagReadModel with ChangeNotifier {
 }
 
 class TagReadPage extends StatelessWidget {
-  static Widget withDependency() => ChangeNotifierProvider<TagReadModel>(
-        create: (context) => TagReadModel(),
-        child: TagReadPage(),
-      );
+  const TagReadPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Tag - Read'),
-      ),
-      body: ListView(
-        padding: EdgeInsets.all(2),
-        children: [
-          FormSection(
-            children: [
-              FormRow(
-                title: Text('Start Session',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary)),
-                onTap: () => startSession(
-                  context: context,
-                  handleTag: Provider.of<TagReadModel>(context, listen: false)
-                      .handleTag,
+    return ChangeNotifierProvider<TagReadModel>(
+      create: (context) => TagReadModel(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Tag - Read'),
+        ),
+        body: ListView(
+          padding: const EdgeInsets.all(2),
+          children: [
+            FormSection(
+              children: [
+                FormRow(
+                  title: Text('Start Session',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary)),
+                  onTap: () => startSession(
+                    context: context,
+                    handleTag: Provider.of<TagReadModel>(context, listen: false)
+                        .handleTag,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          // consider: Selector<Tuple<{TAG}, {ADDITIONAL_DATA}>>
-          Consumer<TagReadModel>(builder: (context, model, _) {
-            final tag = model.tag;
-            final additionalData = model.additionalData;
-            if (tag != null && additionalData != null)
-              return _TagInfo(tag, additionalData);
-            return SizedBox.shrink();
-          }),
-        ],
+              ],
+            ),
+            // consider: Selector<Tuple<{TAG}, {ADDITIONAL_DATA}>>
+            Consumer<TagReadModel>(builder: (context, model, _) {
+              final tag = model.tag;
+              final additionalData = model.additionalData;
+              if (tag != null && additionalData != null) {
+                return _TagInfo(tag, additionalData);
+              }
+              return const SizedBox.shrink();
+            }),
+          ],
+        ),
       ),
     );
   }
 }
 
 class _TagInfo extends StatelessWidget {
-  _TagInfo(this.tag, this.additionalData);
+  const _TagInfo(this.tag, this.additionalData);
 
   final NfcTag tag;
 
@@ -99,58 +100,62 @@ class _TagInfo extends StatelessWidget {
 
     if (Platform.isAndroid) {
       tagWidgets.add(FormRow(
-        title: Text('Identifier'),
-        subtitle: Text(
-            '${(NfcA.from(tag)?.identifier ?? NfcB.from(tag)?.identifier ?? NfcF.from(tag)?.identifier ?? NfcV.from(tag)?.identifier ?? Uint8List(0)).toHexString()}'),
+        title: const Text('Identifier'),
+        subtitle: Text((NfcA.from(tag)?.identifier ??
+                NfcB.from(tag)?.identifier ??
+                NfcF.from(tag)?.identifier ??
+                NfcV.from(tag)?.identifier ??
+                Uint8List(0))
+            .toHexString()),
       ));
       tagWidgets.add(FormRow(
-        title: Text('Tech List'),
+        title: const Text('Tech List'),
         subtitle: Text(_getTechListString(tag)),
       ));
 
       tech = NfcA.from(tag);
       if (tech is NfcA) {
         tagWidgets.add(FormRow(
-          title: Text('NfcA - Atqa'),
-          subtitle: Text('${tech.atqa.toHexString()}'),
+          title: const Text('NfcA - Atqa'),
+          subtitle: Text(tech.atqa.toHexString()),
         ));
         tagWidgets.add(FormRow(
-          title: Text('NfcA - Sak'),
+          title: const Text('NfcA - Sak'),
           subtitle: Text('${tech.sak}'),
         ));
         tagWidgets.add(FormRow(
-          title: Text('NfcA - Max Transceive Length'),
+          title: const Text('NfcA - Max Transceive Length'),
           subtitle: Text('${tech.maxTransceiveLength}'),
         ));
         tagWidgets.add(FormRow(
-          title: Text('NfcA - Timeout'),
+          title: const Text('NfcA - Timeout'),
           subtitle: Text('${tech.timeout}'),
         ));
 
         tech = MifareClassic.from(tag);
         if (tech is MifareClassic) {
           tagWidgets.add(FormRow(
-            title: Text('MifareClassic - Type'),
+            title: const Text('MifareClassic - Type'),
             subtitle: Text(_getMiFareClassicTypeString(tech.type)),
           ));
           tagWidgets.add(FormRow(
-            title: Text('MifareClassic - Size'),
+            title: const Text('MifareClassic - Size'),
             subtitle: Text('${tech.size}'),
           ));
           tagWidgets.add(FormRow(
-            title: Text('MifareClassic - Sector Count'),
+            title: const Text('MifareClassic - Sector Count'),
             subtitle: Text('${tech.sectorCount}'),
           ));
           tagWidgets.add(FormRow(
-            title: Text('MifareClassic - Block Count'),
+            title: const Text('MifareClassic - Block Count'),
             subtitle: Text('${tech.blockCount}'),
           ));
           tagWidgets.add(FormRow(
-            title: Text('MifareClassic - Max Transceive Length'),
+            title: const Text('MifareClassic - Max Transceive Length'),
             subtitle: Text('${tech.maxTransceiveLength}'),
           ));
           tagWidgets.add(FormRow(
-            title: Text('MifareClassic - Timeout'),
+            title: const Text('MifareClassic - Timeout'),
             subtitle: Text('${tech.timeout}'),
           ));
         }
@@ -158,15 +163,15 @@ class _TagInfo extends StatelessWidget {
         tech = MifareUltralight.from(tag);
         if (tech is MifareUltralight) {
           tagWidgets.add(FormRow(
-            title: Text('MifareUltralight - Type'),
+            title: const Text('MifareUltralight - Type'),
             subtitle: Text(_getMiFareUltralightTypeString(tech.type)),
           ));
           tagWidgets.add(FormRow(
-            title: Text('MifareUltralight - Max Transceive Length'),
+            title: const Text('MifareUltralight - Max Transceive Length'),
             subtitle: Text('${tech.maxTransceiveLength}'),
           ));
           tagWidgets.add(FormRow(
-            title: Text('MifareUltralight - Timeout'),
+            title: const Text('MifareUltralight - Timeout'),
             subtitle: Text('${tech.timeout}'),
           ));
         }
@@ -175,15 +180,15 @@ class _TagInfo extends StatelessWidget {
       tech = NfcB.from(tag);
       if (tech is NfcB) {
         tagWidgets.add(FormRow(
-          title: Text('NfcB - Application Data'),
-          subtitle: Text('${tech.applicationData.toHexString()}'),
+          title: const Text('NfcB - Application Data'),
+          subtitle: Text(tech.applicationData.toHexString()),
         ));
         tagWidgets.add(FormRow(
-          title: Text('NfcB - Protocol Info'),
-          subtitle: Text('${tech.protocolInfo.toHexString()}'),
+          title: const Text('NfcB - Protocol Info'),
+          subtitle: Text(tech.protocolInfo.toHexString()),
         ));
         tagWidgets.add(FormRow(
-          title: Text('NfcB - Max Transceive Length'),
+          title: const Text('NfcB - Max Transceive Length'),
           subtitle: Text('${tech.maxTransceiveLength}'),
         ));
       }
@@ -191,19 +196,19 @@ class _TagInfo extends StatelessWidget {
       tech = NfcF.from(tag);
       if (tech is NfcF) {
         tagWidgets.add(FormRow(
-          title: Text('NfcF - System Code'),
-          subtitle: Text('${tech.systemCode.toHexString()}'),
+          title: const Text('NfcF - System Code'),
+          subtitle: Text(tech.systemCode.toHexString()),
         ));
         tagWidgets.add(FormRow(
-          title: Text('NfcF - Manufacturer'),
-          subtitle: Text('${tech.manufacturer.toHexString()}'),
+          title: const Text('NfcF - Manufacturer'),
+          subtitle: Text(tech.manufacturer.toHexString()),
         ));
         tagWidgets.add(FormRow(
-          title: Text('NfcF - Max Transceive Length'),
+          title: const Text('NfcF - Max Transceive Length'),
           subtitle: Text('${tech.maxTransceiveLength}'),
         ));
         tagWidgets.add(FormRow(
-          title: Text('NfcF - Timeout'),
+          title: const Text('NfcF - Timeout'),
           subtitle: Text('${tech.timeout}'),
         ));
       }
@@ -211,15 +216,15 @@ class _TagInfo extends StatelessWidget {
       tech = NfcV.from(tag);
       if (tech is NfcV) {
         tagWidgets.add(FormRow(
-          title: Text('NfcV - DsfId'),
+          title: const Text('NfcV - DsfId'),
           subtitle: Text('${tech.dsfId}'),
         ));
         tagWidgets.add(FormRow(
-          title: Text('NfcV - Response Flags'),
+          title: const Text('NfcV - Response Flags'),
           subtitle: Text('${tech.responseFlags}'),
         ));
         tagWidgets.add(FormRow(
-          title: Text('NfcV - Max Transceive Length'),
+          title: const Text('NfcV - Max Transceive Length'),
           subtitle: Text('${tech.maxTransceiveLength}'),
         ));
       }
@@ -227,23 +232,23 @@ class _TagInfo extends StatelessWidget {
       tech = IsoDep.from(tag);
       if (tech is IsoDep) {
         tagWidgets.add(FormRow(
-          title: Text('IsoDep - Hi Layer Response'),
-          subtitle: Text('${tech.hiLayerResponse?.toHexString() ?? '-'}'),
+          title: const Text('IsoDep - Hi Layer Response'),
+          subtitle: Text(tech.hiLayerResponse?.toHexString() ?? '-'),
         ));
         tagWidgets.add(FormRow(
-          title: Text('IsoDep - Historical Bytes'),
-          subtitle: Text('${tech.historicalBytes?.toHexString() ?? '-'}'),
+          title: const Text('IsoDep - Historical Bytes'),
+          subtitle: Text(tech.historicalBytes?.toHexString() ?? '-'),
         ));
         tagWidgets.add(FormRow(
-          title: Text('IsoDep - Extended Length Apdu Supported'),
+          title: const Text('IsoDep - Extended Length Apdu Supported'),
           subtitle: Text('${tech.isExtendedLengthApduSupported}'),
         ));
         tagWidgets.add(FormRow(
-          title: Text('IsoDep - Max Transceive Length'),
+          title: const Text('IsoDep - Max Transceive Length'),
           subtitle: Text('${tech.maxTransceiveLength}'),
         ));
         tagWidgets.add(FormRow(
-          title: Text('IsoDep - Timeout'),
+          title: const Text('IsoDep - Timeout'),
           subtitle: Text('${tech.timeout}'),
         ));
       }
@@ -254,69 +259,70 @@ class _TagInfo extends StatelessWidget {
       if (tech is FeliCa) {
         final manufacturerParameter =
             additionalData['manufacturerParameter'] as Uint8List?;
-        tagWidgets.add(FormRow(
+        tagWidgets.add(const FormRow(
           title: Text('Type'),
           subtitle: Text('FeliCa'),
         ));
         tagWidgets.add(FormRow(
-          title: Text('Current IDm'),
-          subtitle: Text('${tech.currentIDm.toHexString()}'),
+          title: const Text('Current IDm'),
+          subtitle: Text(tech.currentIDm.toHexString()),
         ));
         tagWidgets.add(FormRow(
-          title: Text('Current System Code'),
-          subtitle: Text('${tech.currentSystemCode.toHexString()}'),
+          title: const Text('Current System Code'),
+          subtitle: Text(tech.currentSystemCode.toHexString()),
         ));
-        if (manufacturerParameter != null)
+        if (manufacturerParameter != null) {
           tagWidgets.add(FormRow(
-            title: Text('Manufacturer Parameter'),
-            subtitle: Text('${manufacturerParameter.toHexString()}'),
+            title: const Text('Manufacturer Parameter'),
+            subtitle: Text(manufacturerParameter.toHexString()),
           ));
+        }
       }
 
       tech = Iso15693.from(tag);
       if (tech is Iso15693) {
-        tagWidgets.add(FormRow(
+        tagWidgets.add(const FormRow(
           title: Text('Type'),
           subtitle: Text('ISO15693'),
         ));
         tagWidgets.add(FormRow(
-          title: Text('Identifier'),
-          subtitle: Text('${tech.identifier.toHexString()}'),
+          title: const Text('Identifier'),
+          subtitle: Text(tech.identifier.toHexString()),
         ));
         tagWidgets.add(FormRow(
-          title: Text('IC Serial Number'),
-          subtitle: Text('${tech.icSerialNumber.toHexString()}'),
+          title: const Text('IC Serial Number'),
+          subtitle: Text(tech.icSerialNumber.toHexString()),
         ));
         tagWidgets.add(FormRow(
-          title: Text('IC Manufacturer Code'),
+          title: const Text('IC Manufacturer Code'),
           subtitle: Text('${tech.icManufacturerCode}'),
         ));
       }
 
       tech = Iso7816.from(tag);
       if (tech is Iso7816) {
-        tagWidgets.add(FormRow(
+        tagWidgets.add(const FormRow(
           title: Text('Type'),
           subtitle: Text('ISO7816'),
         ));
         tagWidgets.add(FormRow(
-          title: Text('Identifier'),
-          subtitle: Text('${tech.identifier.toHexString()}'),
+          title: const Text('Identifier'),
+          subtitle: Text(tech.identifier.toHexString()),
         ));
         tagWidgets.add(FormRow(
-          title: Text('Initial Selected AID'),
-          subtitle: Text('${tech.initialSelectedAID}'),
+          title: const Text('Initial Selected AID'),
+          subtitle: Text(tech.initialSelectedAID),
         ));
         tagWidgets.add(FormRow(
-          title: Text('Application Data'),
-          subtitle: Text('${tech.applicationData?.toHexString() ?? '-'}'),
+          title: const Text('Application Data'),
+          subtitle: Text(tech.applicationData?.toHexString() ?? '-'),
         ));
         tagWidgets.add(FormRow(
-          title: Text('Historical Bytes'),
-          subtitle: Text('${tech.historicalBytes?.toHexString() ?? '-'}'),
+          title: const Text('Historical Bytes'),
+          subtitle: Text(tech.historicalBytes?.toHexString() ?? '-'),
         ));
         tagWidgets.add(FormRow(
-          title: Text('Proprietary Application Data Coding'),
+          title: const Text('Proprietary Application Data Coding'),
           subtitle: Text('${tech.proprietaryApplicationDataCoding}'),
         ));
       }
@@ -324,16 +330,16 @@ class _TagInfo extends StatelessWidget {
       tech = MiFare.from(tag);
       if (tech is MiFare) {
         tagWidgets.add(FormRow(
-          title: Text('Type'),
-          subtitle: Text('MiFare ' + _getMiFareFamilyString(tech.mifareFamily)),
+          title: const Text('Type'),
+          subtitle: Text('MiFare ${_getMiFareFamilyString(tech.mifareFamily)}'),
         ));
         tagWidgets.add(FormRow(
-          title: Text('Identifier'),
-          subtitle: Text('${tech.identifier.toHexString()}'),
+          title: const Text('Identifier'),
+          subtitle: Text(tech.identifier.toHexString()),
         ));
         tagWidgets.add(FormRow(
-          title: Text('Historical Bytes'),
-          subtitle: Text('${tech.historicalBytes?.toHexString() ?? '-'}'),
+          title: const Text('Historical Bytes'),
+          subtitle: Text(tech.historicalBytes?.toHexString() ?? '-'),
         ));
       }
     }
@@ -343,51 +349,54 @@ class _TagInfo extends StatelessWidget {
       final cachedMessage = tech.cachedMessage;
       final canMakeReadOnly = tech.additionalData['canMakeReadOnly'] as bool?;
       final type = tech.additionalData['type'] as String?;
-      if (type != null)
+      if (type != null) {
         ndefWidgets.add(FormRow(
-          title: Text('Type'),
+          title: const Text('Type'),
           subtitle: Text(_getNdefType(type)),
         ));
+      }
       ndefWidgets.add(FormRow(
-        title: Text('Size'),
+        title: const Text('Size'),
         subtitle:
             Text('${cachedMessage?.byteLength ?? 0} / ${tech.maxSize} bytes'),
       ));
       ndefWidgets.add(FormRow(
-        title: Text('Writable'),
+        title: const Text('Writable'),
         subtitle: Text('${tech.isWritable}'),
       ));
-      if (canMakeReadOnly != null)
+      if (canMakeReadOnly != null) {
         ndefWidgets.add(FormRow(
-          title: Text('Can Make Read Only'),
+          title: const Text('Can Make Read Only'),
           subtitle: Text('$canMakeReadOnly'),
         ));
-      if (cachedMessage != null)
-        Iterable.generate(cachedMessage.records.length).forEach((i) {
+      }
+      if (cachedMessage != null) {
+        for (var i in Iterable.generate(cachedMessage.records.length)) {
           final record = cachedMessage.records[i];
           final info = NdefRecordInfo.fromNdef(record);
           ndefWidgets.add(FormRow(
             title: Text('#$i ${info.title}'),
-            subtitle: Text('${info.subtitle}'),
-            trailing: Icon(Icons.chevron_right),
+            subtitle: Text(info.subtitle),
+            trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => NdefRecordPage(i, record),
                 )),
           ));
-        });
+        }
+      }
     }
 
     return Column(
       children: [
         FormSection(
-          header: Text('TAG'),
+          header: const Text('TAG'),
           children: tagWidgets,
         ),
         if (ndefWidgets.isNotEmpty)
           FormSection(
-            header: Text('NDEF'),
+            header: const Text('NDEF'),
             children: ndefWidgets,
           ),
       ],
@@ -403,8 +412,9 @@ String _getTechListString(NfcTag tag) {
   if (tag.data.containsKey('nfcv')) techList.add('NfcV');
   if (tag.data.containsKey('isodep')) techList.add('IsoDep');
   if (tag.data.containsKey('mifareclassic')) techList.add('MifareClassic');
-  if (tag.data.containsKey('mifareultralight'))
+  if (tag.data.containsKey('mifareultralight')) {
     techList.add('MifareUltralight');
+  }
   if (tag.data.containsKey('ndef')) techList.add('Ndef');
   if (tag.data.containsKey('ndefformatable')) techList.add('NdefFormatable');
   return techList.join(' / ');
