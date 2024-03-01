@@ -1,10 +1,16 @@
-import 'package:bus_app/pages/example.dart';
-import 'package:bus_app/pages/example2.dart';
 import 'package:bus_app/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Future(() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      await Geolocator.requestPermission();
+    }
+  });
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -28,8 +34,6 @@ class MyApp extends StatelessWidget {
 // page追加時にはここに追加
 enum PageType {
   homePage,
-  example1,
-  example2,
 }
 
 class BottomNavigationNotifier extends Notifier<PageType> {
@@ -59,11 +63,6 @@ class MainPage extends ConsumerWidget {
       case PageType.homePage:
         bodyWidget = const HomePage();
         break;
-      case PageType.example1:
-        bodyWidget = const ExamplePage1();
-        break;
-      case PageType.example2:
-        bodyWidget = const ExamplePage2();
     }
 
     return Scaffold(
