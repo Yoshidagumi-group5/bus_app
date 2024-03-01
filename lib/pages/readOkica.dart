@@ -6,13 +6,12 @@ import '../backgrounds//form_row.dart';
 import '../backgrounds/nfc_session.dart';
 //import '../backgrounds/ndef_record.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'; // Import Riverpod
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager/platform_tags.dart';
-import 'package:provider/provider.dart';
 
-class TagReadModel with ChangeNotifier {
+class TagReadModel extends ChangeNotifier {
   NfcTag? tag;
-
   Map<String, dynamic>? additionalData;
 
   Future<String?> handleTag(NfcTag tag) async {
@@ -40,57 +39,59 @@ class TagReadModel with ChangeNotifier {
   }
 }
 
-class TagReadPage extends StatelessWidget {
-  static Widget withDependency() => ChangeNotifierProvider<TagReadModel>(
-        create: (context) => TagReadModel(),
-        child: TagReadPage(),
-      );
+// Use Riverpod's autoDispose variant of ChangeNotifierProvider
+final tagReadProvider = ChangeNotifierProvider.autoDispose<TagReadModel>((ref) {
+  return TagReadModel();
+});
+
+class TagReadPage extends ConsumerWidget {
+  static Widget withDependency() {
+    return ProviderScope(
+      child: TagReadPage(),
+    );
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider<TagReadModel>(
-      create: (context) => TagReadModel(), // Provide TagReadModel here
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Tag - Read'),
-        ),
-        body: ListView(
-          padding: EdgeInsets.all(2),
-          children: [
-            FormSection(
-              children: [
-                FormRow(
-                  title: Text('Start Session',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary)),
-                  onTap: () => startSession(
-                    context: context,
-                    handleTag: Provider.of<TagReadModel>(context, listen: false)
-                        .handleTag,
-                  ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Tag - Read'),
+      ),
+      body: ListView(
+        padding: EdgeInsets.all(2),
+        children: [
+          FormSection(
+            children: [
+              FormRow(
+                title: Text('Start Session',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary)),
+                onTap: () => startSession(
+                  context: context,
+                  handleTag: ref.watch(tagReadProvider).handleTag,
                 ),
-              ],
-            ),
-            Consumer<TagReadModel>(builder: (context, model, _) {
-              final tag = model.tag;
-              final additionalData = model.additionalData;
-              if (tag != null && additionalData != null)
-                return _TagInfo(tag, additionalData);
-              return SizedBox.shrink();
-            }),
-          ],
-        ),
+              ),
+            ],
+          ),
+          Consumer(builder: (context, watch, _) {
+            final model = ref.watch(tagReadProvider);
+            final tag = model.tag;
+            final additionalData = model.additionalData;
+            if (tag != null && additionalData != null)
+              return _TagInfo(tag, additionalData);
+            return SizedBox.shrink();
+          }),
+        ],
       ),
     );
   }
 }
 
 class _TagInfo extends StatelessWidget {
-  _TagInfo(this.tag, this.additionalData);
-
   final NfcTag tag;
-
   final Map<String, dynamic> additionalData;
+
+  const _TagInfo(this.tag, this.additionalData);
 
   @override
   Widget build(BuildContext context) {
