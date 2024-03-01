@@ -1,27 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:bus_app/pages/SearchResult.dart';
 
-// マップ(のるところ/おりるところ)(仮)
-class TestMap extends ConsumerWidget {
-  const TestMap({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context, '沖縄高専入口');
-          },
-          child: Text('ホームに戻る'),
-        ),
-      ),
-    );
-  }
-}
-
-// 「乗換あり」ボタンと「普通を外す」ボタンの状態管理
 final transColorProvider = StateProvider<bool>((ref) => false);
+
 final futsuColorProvider = StateProvider<bool>((ref) => false);
 
 // 「じかん」ボタンの時間の管理
@@ -174,22 +156,25 @@ class HomePage extends ConsumerWidget {
                     ),
                   ),
                 ),
-                TextButton(
-                  text: arriveBusstop,
-                  textSize: 30,
-                  width: 300,
-                  height: 80,
-                  onPressed: () async {
-                    /** 
-                     * マップ(のるところ/おりるところ)とくっつけたらコメント外す
-                     * 
-                     * 画面遷移先で以下を実行する
-                     *  Navigator.pop(context, "バス停の名前");
-                     */
-                    // ref.read(arriveBusstopProvider.notifier).state = await Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => TestMap()),
-                    // );
+              ),
+              TextButton(
+                text: 'おりるところ',
+                textSize: 30,
+                width: 300,
+                height: 80,
+                onPressed: () {
+                  // 画面遷移
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    /** feature/searchResultとマージしたときにコメント外す */
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SearchResult()),
+                    );
                   },
                 ),
                 Padding(
