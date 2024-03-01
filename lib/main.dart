@@ -78,7 +78,7 @@ class MainPage extends ConsumerWidget {
         bodyWidget = const ReadOkica();
         break;
       case PageType.busRegistration:
-        bodyWidget = const BusRegistration();
+        bodyWidget = BusRegistration();
         break;
     }
 

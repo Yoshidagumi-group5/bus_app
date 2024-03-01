@@ -48,6 +48,8 @@ dependencies:
   nfc_manager: ^3.3.0
   shared_preferences: ^2.2.2
   supabase_flutter: ^2.3.4
+  persistent_bottom_nav_bar: ^5.0.2
+  persistent_bottom_nav_bar_v2: ^4.2.8
 
 dev_dependencies:
   flutter_test:

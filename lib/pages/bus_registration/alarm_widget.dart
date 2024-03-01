@@ -251,6 +251,7 @@ class _AlarmState extends ConsumerState<Alarm> {
                                   onPressed: () {
                                     alarm.stop();
                                     Vibration.cancel();
+                                    ref.read(widget.busArrivalAlarmProvider.notifier).state = false;
                                     Navigator.pop(context);
                                   },
                                   child: const Text('ストップ'),

@@ -97,13 +97,13 @@ class _SearchResultState extends State<SearchResult> {
 
     Prefs.setInt("currentResultNum", resultNumCounter);
     // バスキーのリストの初期化
-    Prefs.setStringList('busKeys', []);
+    // Prefs.setStringList('busKeys', []);
   }
 
-  void showSharedPreference() {
-    final keys = Prefs.getKeys();
+  void showSharedPreference() async {
+    final keys = await Prefs.getKeys();
     print(keys);
-    print(Prefs.getStringList('busKeys'));
+    print(await Prefs.getStringList('busKeys'));
   }
 
   @override
@@ -369,6 +369,7 @@ class SearchResultClass extends ConsumerWidget {
                   BusRegisterationButton(
                     providers: colorProviders[resultNum],
                     num: resultNum,
+                    busNo: routeInformation[0],
                   ),
                   Expanded(
                     child: Container(
@@ -451,16 +452,23 @@ class SearchResultClass extends ConsumerWidget {
   }
 }
 
-class BusRegisterationButton extends ConsumerWidget {
+class BusRegisterationButton extends ConsumerStatefulWidget {
   const BusRegisterationButton(
-      {super.key, required this.providers, required this.num});
+      {super.key, required this.providers, required this.num, required this.busNo});
 
   final StateProvider<bool> providers;
   final int num;
+  final String busNo;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final color = ref.watch(providers);
+  ConsumerState<BusRegisterationButton> createState() => _BusRegisterationButtonState();
+}
+
+class _BusRegisterationButtonState extends ConsumerState<BusRegisterationButton> {
+
+  @override
+  Widget build(BuildContext context) {
+    final color = ref.watch(widget.providers);
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -471,23 +479,33 @@ class BusRegisterationButton extends ConsumerWidget {
         ),
         child: IconButton(
           onPressed: () async {
-            ref.read(providers.notifier).state = !color;
-
+            ref.read(widget.providers.notifier).state = !color;
+        
             final List<String> busKeys;
-            if (ref.read(providers.notifier).state) {
+            if (ref.read(widget.providers.notifier).state) {
               await Prefs.setStringList(
-                  ((num + Prefs.getInt("currentResultNum")!).toString()),
-                  searchResult[num]);
-
+                  ((widget.num + Prefs.getInt("currentResultNum")!).toString()),
+                  searchResult[widget.num]);
+        
+              // バスキーの重複を防ぐ
+              bool arukanaika = false;
               busKeys = Prefs.getStringList('busKeys')!;
-              busKeys.add((num + Prefs.getInt("currentResultNum")!).toString());
+              for (int i = 0; i < busKeys.length; i++) {
+                arukanaika = arukanaika || (busKeys[i] == (widget.num + Prefs.getInt("currentResultNum")!).toString());
+              }
+              if (!arukanaika) {
+                busKeys.add((widget.num + Prefs.getInt("currentResultNum")!).toString()); // バスキーの追加
+              }
+
               await Prefs.setStringList('busKeys', busKeys);
+              // print('追加後：$busKeys');
             }
             else {
-              await Prefs.remove((num + Prefs.getInt("currentResultNum")!).toString());
+              await Prefs.remove((widget.num + Prefs.getInt("currentResultNum")!).toString());
               busKeys = Prefs.getStringList('busKeys')!;
-              busKeys.remove((num + Prefs.getInt("currentResultNum")!).toString());
+              busKeys.remove((widget.num + Prefs.getInt("currentResultNum")!).toString());
               await Prefs.setStringList('busKeys', busKeys);
+              // print('削除後：$busKeys');
             }
           },
           icon: Icon(

@@ -27,7 +27,7 @@ android {
     compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
-    compileSdkVersion 33    // 追加した
+    compileSdkVersion 34    // 追加した
 
     compileOptions {
         /**
