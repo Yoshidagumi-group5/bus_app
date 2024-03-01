@@ -22,7 +22,7 @@ Future<void> startSession({
         try {
           final result = await handleTag(tag);
           if (result == null) return;
-          await NfcManager.instance.stopSession(alertMessage: "読取が成功しました");
+          await NfcManager.instance.stopSession(alertMessage: "読取りが成功しました");
         } catch (e) {
           await NfcManager.instance.stopSession(errorMessage: '読取に失敗しました');
         }
