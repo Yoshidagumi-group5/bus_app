@@ -3,6 +3,7 @@ import 'package:bus_app/pages/example2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bus_app/pages/google_map_from_navi.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 Future<void> main() async {
   runApp(const ProviderScope(child: MyApp()));
@@ -62,7 +63,7 @@ class MainPage extends ConsumerWidget {
         bodyWidget = const ExamplePage2();
         break;
       case PageType.maps:
-        bodyWidget = GoogleMapsNavi();
+        bodyWidget = const GoogleMapsNavi();
     }
 
     return Scaffold(
