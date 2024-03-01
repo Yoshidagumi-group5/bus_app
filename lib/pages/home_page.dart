@@ -13,7 +13,7 @@ class TestMap extends ConsumerWidget {
           onPressed: () {
             Navigator.pop(context, '沖縄高専入口');
           },
-          child: Text('ホームに戻る'),
+          child: const Text('ホームに戻る'),
         ),
       ),
     );
@@ -50,6 +50,7 @@ class HomePage extends ConsumerWidget {
 
     if (pickedDate != null && pickedDate != selectedDateTime) {
       TimeOfDay? pickedTime = await showTimePicker(
+          // ignore: use_build_context_synchronously
           context: context,
           initialTime: TimeOfDay.fromDateTime(selectedDateTime),
           initialEntryMode: TimePickerEntryMode.input);

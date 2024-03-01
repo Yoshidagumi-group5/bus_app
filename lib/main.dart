@@ -71,7 +71,7 @@ class MainPage extends ConsumerWidget {
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white,
-        backgroundColor: Color(0xFFBD2B2A),
+        backgroundColor: const Color(0xFFBD2B2A),
         currentIndex: PageType.values.indexOf(currentPage),
         items: const [
           BottomNavigationBarItem(
