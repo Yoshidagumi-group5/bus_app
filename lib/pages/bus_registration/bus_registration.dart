@@ -4,6 +4,7 @@ import 'package:bus_app/pages/SearchResult.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 // SearchResult(仮)
 class SearchResult extends StatelessWidget {
@@ -17,18 +18,26 @@ class SearchResult extends StatelessWidget {
   }
 }
 
-List<String> busKeys = [];              // バスを区別するためのキーを保存
-late List<List<String>> busInformation;  // 各バスの情報を保存
+// バスを区別するためのキーを保存
+List<String> busKeys = [
+  for (int i = 0; i < Prefs.getStringList('busKeys')!.length; i++) Prefs.getStringList('busKeys')![i]
+];
+// 各バスの情報を保存
+List<List<String>> busInformation = [
+  for (int i = 0; i < Prefs.getStringList('busKeys')!.length; i++) Prefs.getStringList(busKeys[i])!,
+];
 
+final supabase = Supabase.instance.client;
 // バスのルート(仮)
 const List<List<String>> routes = [
   ['東風平中学校前', '東風平', '伊覇公民館前', 'あああ', 'いいい', 'ううう', 'えええ', 'おおお'],
   ['豊原', '辺野古', '沖縄高専入口', 'かかか', 'ききき', 'くくく', 'けけけ', 'こここ'],
-  // ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
-  // ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
-  // ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
-  // ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
+  ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
+  ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
+  ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
+  ['豊見城平良', '豊見城郵便局前', '住宅前', 'さささ', 'ししし', 'すすす', 'せせせ', 'そそそ'],
 ];
+final routesTest = supabase.from('bus_stop').select('bus_id');
 
 
 enum WidgetType {
@@ -69,6 +78,10 @@ final List<List<StateProvider<bool>>> busStopAlarmProviders = [
 ];
 
 // 表示するルートを切り替えるためのToggleの状態を管理
+// List<bool> route = [
+//   true,
+//   for (int i = 1; i < busKeys.length; i++) false
+// ];
 final routeToggleProvider = StateProvider<List<bool>>(  
   (ref) {
     final boolList = [true];
@@ -78,6 +91,7 @@ final routeToggleProvider = StateProvider<List<bool>>(
     return boolList;
   }
 );
+
 // 表示するルートのウェイジェットの状態を管理
 final routeWidgetProvider = StateProvider<Widget>(
   (ref) => Route(
@@ -86,6 +100,7 @@ final routeWidgetProvider = StateProvider<Widget>(
     busStopAlarmProvider: busStopAlarmProviders[0],
     busArrivalAlarmProvider: busArrivalAlarmProviders[0],
     wakeUpAlarmProvider: wakeUpAlarmProviders[0],
+    busKey: busKeys[0],
     busInfo: busInformation[0],
   ),
 );
@@ -101,13 +116,16 @@ class BusRegistration extends ConsumerStatefulWidget {
 
 class _BusRegistrationState extends ConsumerState<BusRegistration> {
 
+  final supabase = Supabase.instance.client;
+
   Widget pageWidget = const NoRoute();
 
   @override
   void initState() {
     super.initState();
 
-    switch (busKeys.length == 0 ? WidgetType.noRoute : WidgetType.yesRoute) {
+    // ルートがあるかないか判定してウィジェットを返す
+    switch (busKeys.isEmpty ? WidgetType.noRoute : WidgetType.yesRoute) {
       case WidgetType.noRoute:
         pageWidget = const NoRoute();
         break;
@@ -116,14 +134,21 @@ class _BusRegistrationState extends ConsumerState<BusRegistration> {
         break;
     }
 
-    busKeys = Prefs.getStringList('busKeys')!;
+    // バスの情報の更新
+    busKeys = [
+      for (int i = 0; i < Prefs.getStringList('busKeys')!.length; i++) Prefs.getStringList('busKeys')![i]
+    ];
     busInformation = [
-      for (int i = 0; i < Prefs.getStringList('busKeys')!.length; i++) ... {
-        Prefs.getStringList(busKeys[i])!,
-      }
+      for (int i = 0; i < Prefs.getStringList('busKeys')!.length; i++) Prefs.getStringList(busKeys[i])!,
     ];
     print(busInformation);
 
+    // route = [
+    //   true,
+    //   for (int i = 1; i < busKeys.length; i++) false
+    // ];
+
+    // print(routesTest);
   }
 
   @override
@@ -142,22 +167,12 @@ class _BusRegistrationState extends ConsumerState<BusRegistration> {
         ),
         backgroundColor: const Color(0xFFBD2B2B),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          ElevatedButton(
-            onPressed: () {
-              
-            },
-            child: const Text('テスト'),
+          Positioned.fill(
+            child: Image.asset('assets/images/shisa_touka_trimming.png', fit: BoxFit.cover),
           ),
-          Stack(
-            children: [
-              Positioned.fill(
-                child: Image.asset('assets/images/shisa_touka_trimming.png', fit: BoxFit.cover),
-              ),
-              pageWidget,
-            ],
-          ),
+          pageWidget,
         ],
       ),
     );
@@ -182,22 +197,30 @@ final optionWidgetProvider = StateProvider<Widget>(
   ),
 );
 
-class YesRoute extends ConsumerWidget {
+
+class YesRoute extends ConsumerStatefulWidget {
   const YesRoute({super.key, required this.wakeUpAlarmProvider});
 
   final StateProvider<bool> wakeUpAlarmProvider;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<YesRoute> createState() => _YesRouteState();
+}
+
+class _YesRouteState extends ConsumerState<YesRoute> {
+
+  @override
+  Widget build(BuildContext context) {
 
     final List<Widget> routeWidgets = <Widget>[
       for (int i = 0; i < busKeys.length; i++) ... {
         Route(
-          routeNo: 'ルート$i',
+          routeNo: 'ルート${i + 1}',
           busStops: routes[i],  // supabaseから値取ってくる
           busStopAlarmProvider: busStopAlarmProviders[i],
           busArrivalAlarmProvider: busArrivalAlarmProviders[i],
           wakeUpAlarmProvider: wakeUpAlarmProviders[i],
+          busKey: busKeys[i],
           busInfo: busInformation[i],
         )
       }
@@ -218,8 +241,10 @@ class YesRoute extends ConsumerWidget {
                   return ToggleButtons(
                     direction: Axis.horizontal,
                     onPressed: (int index) {
+                      // Toggleを切り替えるためのBool
                       ref.read(routeToggleProvider.notifier).state =
                           List.generate(route.length, (i) => i == index);
+                      // Toggleを切り替えたときにウィジェットも切り替える
                       ref.read(routeWidgetProvider.notifier).state = routeWidgets[index];
 
                       // ルートを切り替える時、optionWidgetはアラームを表示させる
@@ -295,6 +320,7 @@ class Route extends ConsumerWidget {
     required this.busStopAlarmProvider,
     required this.busArrivalAlarmProvider,
     required this.wakeUpAlarmProvider,
+    required this.busKey,
     required this.busInfo,
   });
 
@@ -305,6 +331,7 @@ class Route extends ConsumerWidget {
   final List<StateProvider<bool>> busStopAlarmProvider; // 各バス停の寝落ち防止アラームのon/off
   final StateProvider<bool> busArrivalAlarmProvider;    // 各ルートのバス到着アラーム
   final StateProvider<bool> wakeUpAlarmProvider;        // 各ルートの寝落ち防止アラーム(全体)
+  final String busKey;                                  // バスキー
   final List<String> busInfo;                           // バスの情報
 
   @override
@@ -336,7 +363,7 @@ class Route extends ConsumerWidget {
                 border: Border.all(color: const Color(0xFFE2A5A4), width: 2),
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
               ),
-              child: SearchResultClass(0, busInfo),
+              child: SearchResultClass(int.parse(busKey) - Prefs.getInt('currentResultNum')!, busInfo),
               // child: SearchResult(text: Text('検索結果')),  // SearchResult(仮)
             ),
           ),

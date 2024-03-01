@@ -3,6 +3,7 @@ import 'package:bus_app/pages/home_page.dart';
 import 'package:bus_app/pages/SearchResult.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'pages/okica.dart';
 import 'pages/readOkica.dart';
@@ -10,6 +11,10 @@ import 'pages/readOkica.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Prefs.init();
+  await Supabase.initialize(
+    url: 'https://yomkrunrqlfcujaeehxh.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlvbWtydW5ycWxmY3VqYWVlaHhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDgzNDE4MjcsImV4cCI6MjAyMzkxNzgyN30.2NUBtJUBFz0mEwchKWuPLYMs0i28DzcQMGFkVHlU5tQ'
+  );
   runApp(const ProviderScope(child: MyApp()));
 }
 

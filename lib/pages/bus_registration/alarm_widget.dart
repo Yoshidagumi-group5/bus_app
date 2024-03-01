@@ -232,9 +232,7 @@ class _AlarmState extends ConsumerState<Alarm> {
                       
                       // アラーム(音)
                       await alarm.start(3 + 2);
-                      setState(() {
-                        HapticFeedback.mediumImpact();  // バイブレーション
-                      });
+                      HapticFeedback.mediumImpact();  // バイブレーション
                       /** バイブレーションのもう一つのパターン */
                       // Vibration.vibrate();
                       // if (await Vibration.hasVibrator() ?? false) {
