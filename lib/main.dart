@@ -59,7 +59,7 @@ class MainPage extends ConsumerWidget {
         break;
 
       case PageType.readOkica:
-        bodyWidget = ReadOkica();
+        bodyWidget = const ReadOkica();
         break;
     }
 

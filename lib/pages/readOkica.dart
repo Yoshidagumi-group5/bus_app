@@ -5,10 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager/platform_tags.dart';
 
-void main() {
-  runApp(const ReadOkica());
-}
-
 class ReadOkica extends StatelessWidget {
   const ReadOkica({Key? key}) : super(key: key);
 
