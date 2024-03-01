@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
-class Okica extends StatelessWidget {
+class Okica extends StatefulWidget {
   const Okica({Key? key}) : super(key: key);
 
+  @override
+  State<Okica> createState() => _OkicaState();
+}
+
+class _OkicaState extends State<Okica> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,7 +139,8 @@ class History extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 4.0, bottom: 4.0, left: 16.0),
+                  padding:
+                      const EdgeInsets.only(top: 4.0, bottom: 4.0, left: 16.0),
                   child: Text(
                     date,
                     style: const TextStyle(fontSize: 15),
